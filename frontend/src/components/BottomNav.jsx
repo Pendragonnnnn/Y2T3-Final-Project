@@ -11,7 +11,6 @@ const STUDENT_TABS = [
 const MANAGER_TABS = [
   { to: '/manager', icon: '⌂', label: 'Dashboard' },
   { to: '/manager/students', icon: '☺', label: 'Students' },
-  { to: '/manager/audit-log', icon: '☰', label: 'Audit Log' },
   { to: '/manager/report', icon: '◔', label: 'Report' },
 ];
 

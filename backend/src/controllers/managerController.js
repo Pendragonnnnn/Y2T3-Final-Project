@@ -1,5 +1,4 @@
 const User = require('../models/User');
-const AuditLog = require('../models/AuditLog');
 const Seat = require('../models/Seat');
 const Feedback = require('../models/Feedback');
 
@@ -10,16 +9,6 @@ exports.listStudents = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch students' });
-  }
-};
-
-exports.viewAuditLog = async (req, res) => {
-  try {
-    const logs = await AuditLog.list();
-    res.json({ logs });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to fetch audit log' });
   }
 };
 

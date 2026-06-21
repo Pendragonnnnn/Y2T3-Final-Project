@@ -17,7 +17,7 @@ export default function Login() {
     setLoading(true);
     try {
       const user = await login(email, password);
-      navigate(user.role === 'manager' ? '/manager' : '/home');
+      navigate(user.role?.toLowerCase() === 'manager' ? '/manager' : '/home');
     } catch (err) {
       setError(err.message);
     } finally {

@@ -8,10 +8,10 @@ function toDbRole(role) {
 }
 
 class User {
-  static async create({ email, passwordHash, fullName, role }) {
+  static async create({ email, password, fullName, role }) {
     const [result] = await db.query(
       'INSERT INTO user (email, password, full_name, role) VALUES (?, ?, ?, ?)',
-      [email, passwordHash, fullName, toDbRole(role)]
+      [email, password, fullName, toDbRole(role)]
     );
     if (toDbRole(role) === 'Student') {
       await db.query(

@@ -2,7 +2,6 @@
  * Seeds initial demo accounts.
  * Run with: npm run seed
  */
-const bcrypt = require('bcryptjs');
 const db = require('../src/config/db');
 
 async function ensureLibraryTable(label) {
@@ -14,7 +13,7 @@ async function ensureLibraryTable(label) {
 }
 
 async function seed() {
-  const password = await bcrypt.hash('password123', 12);
+  const password = 'password123';
 
   const tableIds = {
     'Near Outlet': await ensureLibraryTable('Near Outlet'),
@@ -42,7 +41,17 @@ async function seed() {
   for (const acc of accounts) {
     const [existing] = await db.query('SELECT user_id FROM user WHERE email = ?', [acc.email]);
     if (existing.length > 0) {
-      console.log(`Skipping ${acc.email} (already exists)`);
+      await db.query(
+        'UPDATE user SET password = ?, full_name = ?, role = ? WHERE email = ?',
+        [password, acc.fullName, acc.role, acc.email]
+      );
+      if (acc.role === 'Student') {
+        await db.query(
+          'INSERT INTO student_profile (user_id, current_penalty_score) VALUES (?, 100) ON DUPLICATE KEY UPDATE current_penalty_score = VALUES(current_penalty_score)',
+          [existing[0].user_id]
+        );
+      }
+      console.log(`Updated ${acc.email}`);
       continue;
     }
     const [result] = await db.query(

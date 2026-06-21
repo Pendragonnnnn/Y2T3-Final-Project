@@ -2,7 +2,6 @@ const Reservation = require('../models/Reservation');
 const Seat = require('../models/Seat');
 const PenaltyRecord = require('../models/PenaltyRecord');
 const Notification = require('../models/Notification');
-const AuditLog = require('../models/AuditLog');
 const User = require('../models/User');
 
 // ── Student: Quick Random Reserve ───────────────────────────────
@@ -45,7 +44,6 @@ async function createReservation(userId, seatId) {
     scheduledStart: new Date(),
   });
   await Seat.updateStatus(seatId, 'occupied');
-  await AuditLog.log({ performerId: userId, actionTaken: 'REQUEST_RESERVATION', targetId: String(seatId) });
   return reservationId;
 }
 
@@ -89,7 +87,6 @@ exports.cancelReservation = async (req, res) => {
       outcome: 'cancelled',
     });
     await Reservation.delete(reservationId);
-    await AuditLog.log({ performerId: req.user.userId, actionTaken: 'CANCEL_RESERVATION', targetId: reservationId });
 
     res.json({ message: 'Reservation cancelled' });
   } catch (err) {
@@ -132,7 +129,6 @@ exports.acceptReservation = async (req, res) => {
       title: 'Reservation approved',
       messageBody: 'Your seat reservation is now active. Please check in within 10 minutes.',
     });
-    await AuditLog.log({ performerId: req.user.userId, actionTaken: 'ACCEPT_RESERVATION', targetId: reservationId });
 
     res.json({ message: 'Reservation approved' });
   } catch (err) {
@@ -156,7 +152,6 @@ exports.rejectReservation = async (req, res) => {
       title: 'Reservation rejected',
       messageBody: 'Your seat reservation request was rejected by the library manager.',
     });
-    await AuditLog.log({ performerId: req.user.userId, actionTaken: 'REJECT_RESERVATION', targetId: reservationId });
 
     res.json({ message: 'Reservation rejected' });
   } catch (err) {
@@ -190,7 +185,6 @@ exports.triggerNoShowPenalty = async (req, res) => {
       title: 'Penalty applied',
       messageBody: 'You did not check in within 10 minutes of your reservation. A penalty has been applied.',
     });
-    await AuditLog.log({ performerId: reservation.user_id, actionTaken: 'NO_SHOW_PENALTY', targetId: reservationId });
 
     res.json({ message: 'No-show penalty applied' });
   } catch (err) {
@@ -209,7 +203,6 @@ exports.requestCheckout = async (req, res) => {
       return res.status(403).json({ error: 'You can only checkout your own reservation' });
     }
 
-    await AuditLog.log({ performerId: req.user.userId, actionTaken: 'REQUEST_CHECKOUT', targetId: reservationId });
     res.json({ message: 'Checkout requested. Waiting for manager approval.' });
   } catch (err) {
     console.error(err);
@@ -239,7 +232,6 @@ exports.approveCheckout = async (req, res) => {
       title: 'Checkout approved',
       messageBody: 'Your checkout has been approved. Thank you for using the Smart Library System!',
     });
-    await AuditLog.log({ performerId: req.user.userId, actionTaken: 'APPROVE_CHECKOUT', targetId: reservationId });
 
     res.json({ message: 'Checkout approved', reservation });
   } catch (err) {

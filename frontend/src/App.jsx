@@ -11,7 +11,6 @@ import Profile from './pages/Profile';
 import Feedback from './pages/Feedback';
 import ManagerDashboard from './pages/ManagerDashboard';
 import ManagerStudents from './pages/ManagerStudents';
-import ManagerAuditLog from './pages/ManagerAuditLog';
 import ManagerReport from './pages/ManagerReport';
 
 function RootRedirect() {
@@ -40,7 +39,6 @@ export default function App() {
             {/* Manager routes */}
             <Route path="/manager" element={<ProtectedRoute allowedRoles={['manager']}><ManagerDashboard /></ProtectedRoute>} />
             <Route path="/manager/students" element={<ProtectedRoute allowedRoles={['manager']}><ManagerStudents /></ProtectedRoute>} />
-            <Route path="/manager/audit-log" element={<ProtectedRoute allowedRoles={['manager']}><ManagerAuditLog /></ProtectedRoute>} />
             <Route path="/manager/report" element={<ProtectedRoute allowedRoles={['manager']}><ManagerReport /></ProtectedRoute>} />
 
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -80,16 +80,6 @@ CREATE TABLE IF NOT EXISTS notification (
   FOREIGN KEY (recipient_id) REFERENCES user(user_id) ON DELETE CASCADE
 );
 
--- ── Audit log ─────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS audit_log (
-  log_id       INT AUTO_INCREMENT PRIMARY KEY,
-  performer_id INT NOT NULL,
-  action_taken VARCHAR(100) NOT NULL,
-  target_id    VARCHAR(50) NOT NULL,
-  timestamp    DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (performer_id) REFERENCES user(user_id) ON DELETE CASCADE
-);
-
 -- ── Feedback (rating + comment, classified by Logistic Regression) ─
 CREATE TABLE IF NOT EXISTS feedback (
   feedback_id   INT AUTO_INCREMENT PRIMARY KEY,

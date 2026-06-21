@@ -18,7 +18,7 @@ export default function Register() {
     setLoading(true);
     try {
       const user = await register(form);
-      navigate(user.role === 'manager' ? '/manager' : '/home');
+      navigate(user.role?.toLowerCase() === 'manager' ? '/manager' : '/home');
     } catch (err) {
       setError(err.message);
     } finally {

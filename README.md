@@ -13,7 +13,7 @@ smart-library/
 │   ├── src/
 │   │   ├── config/db.js      MySQL connection pool
 │   │   ├── models/           M — User, Seat, Reservation, PenaltyRecord,
-│   │   │                       Notification, AuditLog, Feedback
+│   │   │                       Notification, Feedback
 │   │   ├── controllers/      C — business logic per resource
 │   │   ├── routes/           Express route definitions
 │   │   ├── middleware/auth.js  JWT auth + role-based access control
@@ -72,7 +72,7 @@ The Vite dev server proxies `/api` requests to `http://localhost:5000`, so just 
 
 - **Auth** — register/login (student or manager), JWT-protected routes, role-based access control
 - **Student** — quick random reserve, manual seat picker (real-time map), view/cancel reservations, request checkout, view penalty score + history
-- **Manager** — accept/reject reservations, approve checkout, view all students + penalty scores, audit log, analytics report
+- **Manager** — accept/reject reservations, approve checkout, view all students + penalty scores, analytics report
 - **Penalty system** — no-show triggers a penalty record + score increase + notification (rejection by manager does NOT penalize the student)
 - **Feedback + Logistic Regression** — after checkout, students rate (1–5 stars) and optionally leave a comment. The comment is classified into **Frustrated / Neutral / Satisfied** by `sentimentClassifier.js`, and aggregated results appear on the manager's analytics report (donut charts)
 

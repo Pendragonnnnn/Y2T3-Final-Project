@@ -1,7 +1,5 @@
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const AuditLog = require('../models/AuditLog');
 const { JWT_SECRET } = require('../middleware/auth');
 
 function normalizeRole(role) {
@@ -25,11 +23,10 @@ exports.register = async (req, res) => {
     if (existing) {
       return res.status(409).json({ error: 'An account with this email already exists' });
     }
-    const passwordHash = await bcrypt.hash(password, 12);
     const apiRole = normalizeRole(role);
     const userId = await User.create({
       email,
-      passwordHash,
+      password,
       fullName,
       role: toDbRole(apiRole),
     });
@@ -49,8 +46,7 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
+    if (password !== user.password) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
     const token = jwt.sign(
@@ -58,8 +54,6 @@ exports.login = async (req, res) => {
       JWT_SECRET,
       { expiresIn: '7d' }
     );
-
-    await AuditLog.log({ performerId: user.user_id, actionTaken: 'LOGIN', targetId: String(user.user_id) });
 
     res.json({
       token,

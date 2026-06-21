@@ -1,5 +1,4 @@
 const Seat = require('../models/Seat');
-const AuditLog = require('../models/AuditLog');
 
 exports.getMap = async (req, res) => {
   try {
@@ -28,7 +27,6 @@ exports.blockSeat = async (req, res) => {
     if (!seat) return res.status(404).json({ error: 'Seat not found' });
 
     await Seat.updateStatus(seatId, 'blocked');
-    await AuditLog.log({ performerId: req.user.userId, actionTaken: 'BLOCK_SEAT', targetId: seatId });
     res.json({ message: 'Seat blocked' });
   } catch (err) {
     console.error(err);
@@ -43,7 +41,6 @@ exports.openSeat = async (req, res) => {
     if (!seat) return res.status(404).json({ error: 'Seat not found' });
 
     await Seat.updateStatus(seatId, 'available');
-    await AuditLog.log({ performerId: req.user.userId, actionTaken: 'OPEN_SEAT', targetId: seatId });
     res.json({ message: 'Seat opened' });
   } catch (err) {
     console.error(err);

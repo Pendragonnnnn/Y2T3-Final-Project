@@ -1,12 +1,10 @@
 const db = require('../config/db');
 
 function normalizeStatus(row) {
-  if (!row) return row;
-  return {
-    ...row,
-    status: typeof row.status === 'string' ? row.status.toLowerCase() : row.status,
-    outcome: typeof row.outcome === 'string' ? row.outcome.toLowerCase().replace('-', '_') : row.outcome,
-  };
+  if (!row || !row.outcome) return row;
+  const statusMap = { 'active': 'Active', 'pending': 'Pending', 'inactive': 'Inactive' };
+  const currentStatus = typeof row.outcome === 'string' ? row.outcome.toLowerCase() : '';
+  return { ...row, outcome: statusMap[currentStatus] || row.outcome };
 }
 
 function toDbStatus(status) {
@@ -14,12 +12,27 @@ function toDbStatus(status) {
   return status.toLowerCase() === 'active' ? 'Active' : 'Pending';
 }
 
-function toDbOutcome(outcome) {
-  const normalized = typeof outcome === 'string' ? outcome.toLowerCase() : outcome;
-  if (normalized === 'completed') return 'Completed';
-  if (normalized === 'cancelled') return 'Cancelled';
-  if (normalized === 'no_show') return 'No-Show';
-  return outcome;
+/**
+ * Expires any Pending reservations older than 30 minutes.
+ * Marks them Inactive and frees their seats in one pass.
+ * Called lazily before any query that would be affected by stale Pending rows.
+ */
+async function expireStaleReservations() {
+  await db.query(
+    `UPDATE Seat
+     SET current_status = 'Available'
+     WHERE seat_id IN (
+       SELECT seat_id FROM Reservation_Record
+       WHERE outcome = 'Pending'
+         AND start_time <= NOW() - INTERVAL 30 MINUTE
+     )`
+  );
+  await db.query(
+    `UPDATE Reservation_Record
+     SET outcome = 'Inactive', end_time = NOW()
+     WHERE outcome = 'Pending'
+       AND start_time <= NOW() - INTERVAL 30 MINUTE`
+  );
 }
 
 class Reservation {
@@ -30,6 +43,15 @@ class Reservation {
       [userId, seatId, scheduledStart]
     );
     return result.insertId;
+  }
+
+  static async activeReservationCount(userId) {
+    await expireStaleReservations();
+    const [rows] = await db.query(
+      "SELECT reservation_id FROM Reservation_Record WHERE user_id = ? AND outcome IN ('Pending', 'Active')",
+      [userId]
+    );
+    return rows.length > 0;
   }
 
   static async findById(reservationId) {
@@ -50,6 +72,24 @@ class Reservation {
        WHERE ar.user_id = ? AND ar.status IN ('Pending', 'Active')
        ORDER BY ar.scheduled_start DESC`,
       [userId]
+    );
+    return rows;
+  }
+
+  // Fetches Pending + Active reservations for the manager dashboard.
+  // Pending always floats to the top, then sorted by date within each group.
+  static async listActiveAndPending() {
+    await expireStaleReservations();
+    const [rows] = await db.query(
+      `SELECT r.*, u.full_name, u.email, t.table_label
+       FROM Reservation_Record r
+       JOIN User u ON u.user_id = r.user_id
+       JOIN Seat s ON s.seat_id = r.seat_id
+       JOIN Library_Table t ON t.table_id = s.table_id
+       WHERE r.outcome IN ('Pending', 'Active')
+       ORDER BY
+         CASE r.outcome WHEN 'Pending' THEN 0 ELSE 1 END ASC,
+         r.reservation_date ASC`
     );
     return rows;
   }

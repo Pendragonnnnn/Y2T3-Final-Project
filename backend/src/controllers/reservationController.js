@@ -106,6 +106,16 @@ exports.listPending = async (req, res) => {
   }
 };
 
+exports.listActiveAndPending = async (req, res) => {
+  try {
+    const reservations = await Reservation.listActiveAndPending();
+    res.json({ reservations });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch reservations' });
+  }
+};
+
 exports.listAll = async (req, res) => {
   try {
     const reservations = await Reservation.listAll();

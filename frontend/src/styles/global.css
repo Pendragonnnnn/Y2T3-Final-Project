@@ -42,20 +42,70 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+<<<<<<< HEAD
 .logo-container {
   width: 120px;
   height: 120px;
   margin: 100px auto 20px;
   
+=======
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+p { margin: 0; }
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: color 0.1s ease-in-out, background-color 0.1s ease-in-out; 
+  font-weight: 900;
+}
+
+input, select, textarea {
+  font-family: var(--font-body);
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ── App shell: mobile-first phone frame on desktop, full width on mobile ── */
+.app-shell {
+  max-width: 430px;
+  margin: 0 auto;
+  height: 100vh; /* Use height instead of min-height */
+  background: var(--color-bg);
+>>>>>>> 7db5f4b (merge)
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+<<<<<<< HEAD
 .logo {
   width: 300px;
   height: 150px;
   object-fit: contain;
+=======
+.cancel-action-btn:hover{
+  color: red;
+}
+
+.reject-action-btn:hover{
+  color: rgb(255, 40, 40);
+}
+
+@media (min-width: 600px) {
+  .app-shell {
+    margin: 24px auto;
+    min-height: calc(100vh - 48px);
+    border-radius: 32px;
+    box-shadow: 0 20px 60px rgba(26, 34, 56, 0.18);
+    overflow: hidden;
+  }
+>>>>>>> 7db5f4b (merge)
 }
 
 /* home page*/
@@ -281,11 +331,21 @@ a { text-decoration: none; color: inherit; }
   font-size: 11px;
   font-weight: 600;
 }
+
+.badge-manager {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .badge-available { background: #E8F8EE; color: #1E8E4F; }
 .badge-occupied { background: #FDECEA; color: #C0392B; }
 .badge-blocked { background: #F0F1F4; color: #6B7693; }
 .badge-pending { background: #FFF4E0; color: #B8770A; }
-.badge-accepted { background: #E8F8EE; color: #1E8E4F; }
+.badge-accepted { background: #19e86f; color: #ffffff; }
 .badge-checked_in { background: #E5EEFF; color: #2D5FE0; }
 
 /* ── Bottom nav ── */
@@ -494,6 +554,15 @@ a { text-decoration: none; color: inherit; }
   opacity: 1;
 }
 
+<<<<<<< HEAD
+=======
+.map-obstacle {
+  border: 3px solid #739fce51; /* Use your light slate color */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1; /* Keeps them below the tables */
+}
+
+>>>>>>> 7db5f4b (merge)
 @media (max-width: 480px) {
   .interactive-map-canvas {
     height: 460px;

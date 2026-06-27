@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import BottomNav from '../components/BottomNav';
@@ -14,20 +14,33 @@ export default function SeatMap() {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reserving, setReserving] = useState(false);
+  const [hasActive, setHasActive] = useState(false);
 
   const loadSeats = () => {
     setLoading(true);
     api.get('/seats').then(({ data }) => setSeats(data.seats)).finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadSeats(); }, []);
+  const checkActiveReservation = useCallback(async () => {
+  try {
+    const { data } = await api.get('/reservations/check-status'); // Add this endpoint in your backend
+    setHasActive(data.hasActive);
+  } catch (err) {
+    console.error("Failed to check status", err);
+  }
+}, []);
+
+  useEffect(() => {
+  loadSeats();
+  checkActiveReservation();
+}, []);
 
   const handleReserve = async () => {
     if (!selected) return;
     setReserving(true);
     try {
       await api.post('/reservations/manual', { seatId: selected.seat_id });
-      showToast(`Seat ${selected.seat_id} reserved! Awaiting approval.`);
+      showToast(`Seat reserved!`);
       setTimeout(() => navigate('/reservations'), 1200);
     } catch (err) {
       showToast(err.response?.data?.error || 'Could not reserve seat');
@@ -38,16 +51,15 @@ export default function SeatMap() {
   };
 
   return (
+    
     <div className="screen">
       <div className="screen-header">
-        <h2 className="screen-title">Real-time seat map</h2>
-        <button onClick={loadSeats} style={{ fontSize: 18 }}>↻</button>
-      </div>
-
-      <div className="flex-row mb-16">
-        <span className="badge badge-available">● Available</span>
-        <span className="badge badge-occupied">● Occupied</span>
-        <span className="badge badge-blocked">● Blocked</span>
+        <h2 className="screen-title">Library Map</h2>
+        {hasActive && (
+  <div className="alert alert-warning">
+    You already have a pending or active reservation.
+  </div>
+)}
       </div>
 
       {loading ? (
@@ -55,15 +67,31 @@ export default function SeatMap() {
       ) : (
         <InteractiveSeatMap seats={seats} selectedSeatId={selected?.seat_id} onSelectSeat={setSelected} />
       )}
-
+    
       {selected && (
-        <div className="card mt-16" style={{ position: 'sticky', bottom: 90 }}>
-          <p style={{ fontWeight: 600 }}>Seat {selected.seat_id} · Table {selected.table_label}</p>
-          <Button onClick={handleReserve} loading={reserving} className="mt-8">
-            Reserve this seat
-          </Button>
-        </div>
-      )}
+      <div className="card mt-16" style={{ position: 'sticky', bottom: 10, paddingLeft: '0px' ,paddingTop: '10px', display: 'flex', flexDirection: 'row', gap: '10px'}}>
+        {/* Close Button */}
+        
+
+        <p style={{ fontWeight: '200' }}></p>
+        <Button 
+          onClick={handleReserve} 
+          loading={reserving} 
+          disabled={hasActive || !selected} 
+          className="mt-8"
+        > 
+          {hasActive ? 'Reservation Limit Reached' : 'Reserve this seat'}
+        </Button>
+        <button 
+          onClick={() => setSelected(null)} 
+          className='mt-8 cancel-action-btn'
+          aria-label="Close"
+          
+        >
+          Cancel
+        </button>
+      </div>
+    )}
 
       <Toast message={message} />
       <BottomNav />

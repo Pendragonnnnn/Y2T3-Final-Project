@@ -59,22 +59,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <h3 style={{ fontSize: 15, marginTop: 24, marginBottom: 12 }}>Reservation history</h3>
-      <div className="stack">
-        {history.length === 0 && <p className="text-muted">No past reservations yet.</p>}
-        {history.slice(0, 5).map((h) => (
-          <div key={h.history_id} className="card flex-between">
-            <div>
-              <p style={{ fontWeight: 600, fontSize: 13 }}>Seat {h.seat_id} · Table {h.table_label}</p>
-              <p className="text-muted">{new Date(h.reservation_date).toLocaleDateString()}</p>
-            </div>
-            <span className={`badge badge-${h.outcome === 'completed' ? 'accepted' : h.outcome === 'no_show' ? 'occupied' : 'blocked'}`}>
-              {h.outcome.replace('_', ' ')}
-            </span>
-          </div>
-        ))}
-      </div>
-
+    
       <Button variant="outline" onClick={handleLogout} className="mt-24">
         Log out
       </Button>

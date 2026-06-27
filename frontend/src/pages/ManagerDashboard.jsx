@@ -17,16 +17,18 @@ export default function ManagerDashboard() {
 
   const load = () => {
     setLoading(true);
-    api.get('/reservations/pending').then(({ data }) => setReservations(data.reservations)).finally(() => setLoading(false));
+    api.get('/reservations/active-and-pending')
+      .then(({ data }) => setReservations(data.reservations))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);
 
-  const handleAction = async (id, action) => {
+  const handleReject = async (id) => {
     setBusyId(id);
     try {
-      await api.patch(`/reservations/${id}/${action}`);
-      showToast(action === 'accept' ? 'Reservation approved' : 'Reservation rejected');
+      await api.patch(`/reservations/${id}/reject`);
+      showToast('Reservation rejected');
       load();
     } catch (err) {
       showToast(err.response?.data?.error || 'Action failed');
@@ -45,10 +47,15 @@ export default function ManagerDashboard() {
       <div className="screen-header">
         <div>
           <p className="text-muted">Manager Dashboard</p>
-          <h2 className="screen-title">Pending reservations</h2>
+          <h2 className="screen-title">Reservations</h2>
         </div>
         <button onClick={handleLogout} style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>Log out</button>
       </div>
+
+      <div style={{ alignSelf: "center", marginTop: '20px', fontWeight: 800 }}>
+        Reservations List
+      </div>
+      <div className='screen-header' style={{ alignSelf: "center", paddingTop: '0px'}}>__________________________________</div>
 
       {loading ? (
         <div className="text-center mt-24"><div className="spinner" style={{ margin: '0 auto' }} /></div>
@@ -56,40 +63,40 @@ export default function ManagerDashboard() {
         <div className="empty-state">
           <p style={{ fontSize: 32 }}>✓</p>
           <p style={{ fontWeight: 600 }}>All caught up</p>
-          <p className="text-muted">No pending reservations right now</p>
+          <p className="text-muted">No active reservations right now</p>
         </div>
       ) : (
         <div className="stack">
-          {reservations.map((r) => (
-            <div key={r.reservation_id} className="card">
-              <div className="flex-between">
-                <div>
-                  <p style={{ fontWeight: 600 }}>{r.full_name}</p>
-                  <p className="text-muted">{r.email}</p>
-                  <p className="text-muted mt-8">Seat {r.seat_id} · Table {r.table_label}</p>
+          {reservations.map((r) => {
+            const isPending = r.outcome === 'Pending';
+            return (
+              <div key={r.reservation_id} className="card" style={{ padding: '10px 5px 16px 24px', borderRadius:'2px' }}>
+                <div className="flex-between">
+                  <div>
+                    <span style={{ color: '#9a9a9a', fontWeight: '1000', fontSize: '14px' }}>Seat {r.seat_id}</span>
+                    <p style={{ fontWeight: 200, fontSize: '20px'}}>{r.full_name}</p>
+                    <p className="text-muted" style={{ fontSize: '12px' }}>{r.email}</p>
+                  </div>
+                  <div style={{ alignSelf: 'flex-start', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, paddingRight: 12 }}>
+                    <span style={{ borderRadius: '4px', padding: "4px 26px" }}  className={`badge-manager ${isPending ? 'badge-pending' : 'badge-accepted'}`}>
+                      {isPending ? 'Pending' : 'Active'}
+                    </span>
+                    {isPending && (
+                      <button
+                        className='mt-8 btn-primary reject-action-btn'
+                        style={{ borderRadius: "40px", padding: '6px 10px', background: '#e31c1c'}}
+                        
+                        onClick={() => handleReject(r.reservation_id)}
+                        loading={busyId === r.reservation_id}
+                      >
+                        Reject
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <span className="badge badge-pending">Pending</span>
               </div>
-              <div className="flex-row mt-16">
-                <Button
-                  variant="success"
-                  size="sm"
-                  onClick={() => handleAction(r.reservation_id, 'accept')}
-                  loading={busyId === r.reservation_id}
-                >
-                  Accept
-                </Button>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleAction(r.reservation_id, 'reject')}
-                  loading={busyId === r.reservation_id}
-                >
-                  Reject
-                </Button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

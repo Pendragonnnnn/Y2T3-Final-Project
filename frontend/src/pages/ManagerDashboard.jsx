@@ -56,10 +56,10 @@ export default function ManagerDashboard() {
         </div>
       </div>
 
-      <div style={{ alignSelf: "center", marginTop: '20px', padding: '0 40px 20px 40px', fontWeight: 500, borderBottom:'1px solid #0B56A4' }}>
+      <div style={{ alignSelf: "center", marginTop: '20px', fontWeight: 800 }}>
         Reservations List
       </div>
-      <div className='screen-header' style={{ alignSelf: "center", paddingTop: '0px'}}></div>
+      <div className='screen-header' style={{ alignSelf: "center", paddingTop: '0px'}}>__________________________________</div>
 
       {loading ? (
         <div className="text-center mt-24"><div className="spinner" style={{ margin: '0 auto' }} /></div>

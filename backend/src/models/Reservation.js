@@ -94,6 +94,24 @@ class Reservation {
     return rows;
   }
 
+  // Fetches Pending + Active reservations for the manager dashboard.
+  // Pending always floats to the top, then sorted by date within each group.
+  static async listActiveAndPending() {
+    await expireStaleReservations();
+    const [rows] = await db.query(
+      `SELECT r.*, u.full_name, u.email, t.table_label
+       FROM Reservation_Record r
+       JOIN User u ON u.user_id = r.user_id
+       JOIN Seat s ON s.seat_id = r.seat_id
+       JOIN Library_Table t ON t.table_id = s.table_id
+       WHERE r.outcome IN ('Pending', 'Active')
+       ORDER BY
+         CASE r.outcome WHEN 'Pending' THEN 0 ELSE 1 END ASC,
+         r.reservation_date ASC`
+    );
+    return rows;
+  }
+
   static async listAll() {
     const [rows] = await db.query(
       `SELECT ar.reservation_id, ar.user_id, ar.seat_id, ar.scheduled_start, ar.actual_check_in,

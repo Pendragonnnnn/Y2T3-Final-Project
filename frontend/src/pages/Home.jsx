@@ -6,6 +6,7 @@ import BottomNav from '../components/BottomNav';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
 import { useToast } from '../components/useToast';
+import person from '../assets/person.svg';
 
 export default function Home() {
   const { user } = useAuth();
@@ -33,13 +34,19 @@ export default function Home() {
       setReserving(false);
     }
   };
-
+  
   return (
     <div className="screen">
       <div className="screen-header">
-        <div>
-          <p className="text-muted">Welcome back,</p>
-          <h2 className="screen-title">{user?.fullName?.split(' ')[0]} 👋</h2>
+        <div className="welcome-card">
+          <button className="profile-icon" type="button" onClick={() => navigate('/profile')}>
+            <img src={person} alt="Profile" />
+          </button>
+
+          <div className="welcome-text">
+            <p className="text-muted">Welcome back,</p>
+            <h2 className="screen-title">{user?.fullName?.split(' ')[0]} 👋</h2>
+          </div>
         </div>
         <div
           style={{
@@ -53,25 +60,25 @@ export default function Home() {
       </div>
 
       {/* Seat stats card — Mobile 2 style with two stat pills */}
-      <div className="card mt-8" style={{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-light))' }}>
-        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13 }}>Seats available right now</p>
+      <div className="card mt-8" style={{ background: 'linear-gradient(270deg, var(--color-primary), var(--color-primary-light))', padding: 20 }}>
+        <p style={{ color: 'white', fontSize: 14, paddingBottom: 10 }}>Seats available right now</p>
         {loading ? (
           <div className="spinner" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: 'white', margin: '12px 0' }} />
         ) : (
           <div className="flex-row" style={{ gap: 16, marginTop: 8 }}>
-            <div>
-              <p style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>{stats?.available ?? 0}</p>
-              <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 11 }}>Available</p>
+            <div className='show_seat'>
+              <p style={{ color: 'blue', fontSize: 28, fontWeight: 700 }}>{stats?.available ?? 0}</p>
+              <p style={{ color: 'black', fontSize: 11 }}>Available</p>
+            </div >
+
+            <div className='show_seat'>
+              <p style={{ color: 'red', fontSize: 28, fontWeight: 700 }}>{stats?.occupied ?? 0}</p>
+              <p style={{ color: 'black', fontSize: 11 }}>Occupied</p>
             </div>
-            <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.25)' }} />
-            <div>
-              <p style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>{stats?.occupied ?? 0}</p>
-              <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 11 }}>Occupied</p>
-            </div>
-            <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.25)' }} />
-            <div>
-              <p style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>{stats?.total ?? 0}</p>
-              <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 11 }}>Total</p>
+
+            <div className='show_seat'>
+              <p style={{ color: 'rgb(31, 146, 35)', fontSize: 28, fontWeight: 700 }}>{stats?.total ?? 0}</p>
+              <p style={{ color: 'black', fontSize: 11 }}>Total</p>
             </div>
           </div>
         )}

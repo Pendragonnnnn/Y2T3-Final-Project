@@ -24,6 +24,7 @@ smart-library/
 │
 └── frontend/                 React (Vite) SPA
     └── src/
+        |__ assets            Store images, icons, fonts, and static file together.
         ├── components/       Reusable UI: Button, SeatGrid, BottomNav, etc.
         ├── pages/             V — Login, Home, SeatMap, Reservations,
         │                        Profile, Feedback, Manager* screens

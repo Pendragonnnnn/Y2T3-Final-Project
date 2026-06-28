@@ -42,6 +42,92 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.logo-container {
+  width: 120px;
+  height: 120px;
+  margin: 100px auto 20px;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 300px;
+  height: 150px;
+  object-fit: contain;
+}
+
+/* home page*/
+.screen {
+  flex: 1; /* Take up all available vertical space */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  padding-bottom: 90px;
+  overflow-y: auto; /* Adds a scrollbar inside the screen instead of pushing the footer */
+  width: 100%;
+  background: linear-gradient(160deg,rgba(209, 226, 243, 1) 7%,rgba(204, 222, 241, 1) 10%,rgba(0, 62, 195, 1) 100%)
+}
+
+.screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.screen-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.welcome-card {
+  width: 300px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+}
+
+.profile-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.profile-icon img {
+  width: 30px;
+  height: 30px;
+}
+
+.welcome-text p {
+  margin: 0;
+  color: #7a7a7a;
+  font-weight: 500;
+}
+
+.welcome-text h2 {
+  margin-top: 6px;
+  margin-bottom: 0;
+  font-weight: 700;
+  color: #222;
+}
+/*  ===  */
+
+.title {
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   margin: 0;
@@ -92,17 +178,7 @@ a { text-decoration: none; color: inherit; }
   overflow-y: auto;
 }
 
-.screen-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
 
-.screen-title {
-  font-size: 18px;
-  font-weight: 600;
-}
 
 /* ── Buttons ── */
 .btn {
@@ -456,4 +532,14 @@ a { text-decoration: none; color: inherit; }
   z-index: 1000;
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
   max-width: 90%;
+}
+
+.show_seat {
+  background: whitesmoke;
+  width: 120px;
+  height: 65px;
+  padding: 10px 10px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.322);
+  
 }

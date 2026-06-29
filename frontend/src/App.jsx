@@ -12,6 +12,8 @@ import Feedback from './pages/Feedback';
 import ManagerDashboard from './pages/ManagerDashboard';
 import ManagerStudents from './pages/ManagerStudents';
 import ManagerReport from './pages/ManagerReport';
+import ManagerScanner from './pages/ManagerScanner';
+import FAQ from './pages/FAQ';
 
 function RootRedirect() {
   const { user } = useAuth();

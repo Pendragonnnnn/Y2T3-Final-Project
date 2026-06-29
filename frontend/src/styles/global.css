@@ -25,7 +25,6 @@
   --shadow-elevated: 0 8px 24px rgba(45, 95, 224, 0.16);
 
   --font-display: 'Poppins', sans-serif;
-  --font-body: 'Inter', sans-serif;
   --font-body: 'Poppins', sans-serif;
 
   --map-bg: #475467;        /* From your dark uploaded image */
@@ -245,6 +244,21 @@ a { text-decoration: none; color: inherit; }
   overflow-y: auto;
 }
 
+.faq-screen-header{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  align-self: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
 
 
 /* ── Buttons ── */

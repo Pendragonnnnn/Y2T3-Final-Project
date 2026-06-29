@@ -3,9 +3,10 @@ import api from '../services/api';
 import BottomNav from '../components/BottomNav';
 
 const SENTIMENT_COLORS = {
-  satisfied: '#2ECC71',
-  neutral: '#A0AAC2',
-  frustrated: '#E74C3C',
+  bug: '#E74C3C',
+  feature_request: '#4095F6',
+  management_issue: '#F5A623',
+  general: '#A0AAC2',
 };
 
 function DonutStat({ percent, label, color }) {
@@ -68,7 +69,7 @@ export default function ManagerReport() {
 
       <div className="card mt-16">
         <div className="flex-between">
-          <p style={{ fontWeight: 600 }}>Student satisfaction</p>
+          <p style={{ fontWeight: 600 }}>Feedback breakdown</p>
           <span className="text-muted" style={{ fontSize: 12 }}>via Logistic Regression</span>
         </div>
 
@@ -76,10 +77,19 @@ export default function ManagerReport() {
           <p className="text-muted mt-16">No feedback submitted yet.</p>
         ) : (
           <>
-            <div className="flex-row mt-16" style={{ justifyContent: 'space-around' }}>
-              <DonutStat percent={pct(breakdown.satisfied)} label="Satisfied" color={SENTIMENT_COLORS.satisfied} />
-              <DonutStat percent={pct(breakdown.neutral)} label="Neutral" color={SENTIMENT_COLORS.neutral} />
-              <DonutStat percent={pct(breakdown.frustrated)} label="Frustrated" color={SENTIMENT_COLORS.frustrated} />
+            <div
+              className="mt-16"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                rowGap: 20,
+                justifyItems: 'center',
+              }}
+            >
+              <DonutStat percent={pct(breakdown.bug)} label="Bug reports" color={SENTIMENT_COLORS.bug} />
+              <DonutStat percent={pct(breakdown.feature_request)} label="Feature requests" color={SENTIMENT_COLORS.feature_request} />
+              <DonutStat percent={pct(breakdown.management_issue)} label="Management issues" color={SENTIMENT_COLORS.management_issue} />
+              <DonutStat percent={pct(breakdown.general)} label="General comments" color={SENTIMENT_COLORS.general} />
             </div>
             <div className="flex-between mt-16" style={{ borderTop: '1px solid var(--color-border)', paddingTop: 12 }}>
               <span className="text-muted">Average star rating</span>

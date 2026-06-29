@@ -1,6 +1,6 @@
 :root {
   /* Color tokens — derived from the Figma mockups (blue gradient app theme) */
-  --color-primary: #2D5FE0;
+  --color-primary: #0B56A4;
   --color-primary-dark: #1E3F9E;
   --color-primary-light: #5C84F2;
   --color-accent: #4ECDC4;
@@ -8,7 +8,7 @@
   --color-warning: #F5A623;
   --color-danger: #E74C3C;
 
-  --color-bg: #F4F6FB;
+  --color-bg: #FDFDFD;
   --color-surface: #FFFFFF;
   --color-border: #E3E8F0;
 
@@ -26,6 +26,11 @@
 
   --font-display: 'Poppins', sans-serif;
   --font-body: 'Inter', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+
+  --map-bg: #475467;        /* From your dark uploaded image */
+  --map-line: #98a2b3;      /* From your light line image */
+  --map-surface: #536477;
 }
 
 * { box-sizing: border-box; }
@@ -42,13 +47,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-<<<<<<< HEAD
-.logo-container {
-  width: 120px;
-  height: 120px;
-  margin: 100px auto 20px;
-  
-=======
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   margin: 0;
@@ -62,7 +60,7 @@ button {
   border: none;
   background: none;
   transition: color 0.1s ease-in-out, background-color 0.1s ease-in-out; 
-  font-weight: 900;
+  font-weight: 600;
 }
 
 input, select, textarea {
@@ -77,24 +75,35 @@ a { text-decoration: none; color: inherit; }
   margin: 0 auto;
   height: 100vh; /* Use height instead of min-height */
   background: var(--color-bg);
->>>>>>> 7db5f4b (merge)
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-<<<<<<< HEAD
-.logo {
-  width: 300px;
-  height: 150px;
-  object-fit: contain;
-=======
 .cancel-action-btn:hover{
   color: red;
 }
 
 .reject-action-btn:hover{
   color: rgb(255, 40, 40);
+}
+
+.logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+  width: 100%;
+  color: rgba(255, 0, 0, 0.792);
+}
+
+.logout-button:hover {
+  color: rgb(0, 0, 0);
 }
 
 @media (min-width: 600px) {
@@ -105,7 +114,6 @@ a { text-decoration: none; color: inherit; }
     box-shadow: 0 20px 60px rgba(26, 34, 56, 0.18);
     overflow: hidden;
   }
->>>>>>> 7db5f4b (merge)
 }
 
 /* home page*/
@@ -120,10 +128,19 @@ a { text-decoration: none; color: inherit; }
   background: linear-gradient(160deg,rgba(209, 226, 243, 1) 7%,rgba(204, 222, 241, 1) 10%,rgba(0, 62, 195, 1) 100%)
 }
 
+.faq-screen-header{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
 .screen-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  align-self: center;
+  margin-top: 10px;
   margin-bottom: 20px;
 }
 
@@ -237,7 +254,7 @@ a { text-decoration: none; color: inherit; }
   justify-content: center;
   gap: 8px;
   padding: 13px 20px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 14px;
   transition: transform 0.1s ease, opacity 0.15s ease;
@@ -284,7 +301,7 @@ a { text-decoration: none; color: inherit; }
 /* ── Cards ── */
 .card {
   background: var(--color-surface);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   padding: 16px;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--color-border);
@@ -341,11 +358,11 @@ a { text-decoration: none; color: inherit; }
   font-weight: 600;
 }
 
-.badge-available { background: #E8F8EE; color: #1E8E4F; }
+.badge-available { background: #E8F8EE; color: #1e8e4fa8; }
 .badge-occupied { background: #FDECEA; color: #C0392B; }
 .badge-blocked { background: #F0F1F4; color: #6B7693; }
 .badge-pending { background: #FFF4E0; color: #B8770A; }
-.badge-accepted { background: #19e86f; color: #ffffff; }
+.badge-accepted { background: #539546; color: #ffffff; }
 .badge-checked_in { background: #E5EEFF; color: #2D5FE0; }
 
 /* ── Bottom nav ── */
@@ -418,7 +435,6 @@ a { text-decoration: none; color: inherit; }
 .interactive-map-shell {
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
 .interactive-map-canvas {
@@ -554,15 +570,12 @@ a { text-decoration: none; color: inherit; }
   opacity: 1;
 }
 
-<<<<<<< HEAD
-=======
 .map-obstacle {
   border: 3px solid #739fce51; /* Use your light slate color */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 1; /* Keeps them below the tables */
 }
 
->>>>>>> 7db5f4b (merge)
 @media (max-width: 480px) {
   .interactive-map-canvas {
     height: 460px;

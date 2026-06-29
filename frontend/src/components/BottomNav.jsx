@@ -12,6 +12,7 @@ const MANAGER_TABS = [
   { to: '/manager', icon: '🖳', label: 'Dashboard' },
   { to: '/manager/students', icon: '☺', label: 'Students' },
   { to: '/manager/report', icon: '◔', label: 'Report' },
+  { to: '/profile', icon: '☺', label: 'Profile' },
 ];
 
 export default function BottomNav() {

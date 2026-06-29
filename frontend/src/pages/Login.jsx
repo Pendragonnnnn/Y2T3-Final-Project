@@ -68,26 +68,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{
-              background: 'white',
-              border: '1.5px solid rgba(255,255,255,0.25)',
-              color: 'silver',
-              width: '100%',
-              paddingRight: '45px',
-            }}
-          />
-
-          <img
-            src={person}
-            alt="Person"
-            style={{
-              position: 'absolute',
-              right: '15px',
-              top: '65%',
-              transform: 'translateY(-50%)',
-              width: 20,
-              height: 20,
-            }}
+            style={{ background: 'rgba(255, 255, 255, 0.12)', border: '1.5px solid rgba(255,255,255,0.25)', color: 'white' }}
           />
         </div>
 

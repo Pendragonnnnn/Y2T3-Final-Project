@@ -75,3 +75,35 @@ exports.me = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch profile' });
   }
 };
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'currentPassword and newPassword are required' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'New password must be at least 6 characters' });
+    }
+
+    // Fetch the stored password for this user
+    const stored = await User.getPasswordById(req.user.userId);
+    if (stored === null) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Plain-text comparison (swap for bcrypt.compare once hashing is added)
+    if (currentPassword !== stored) {
+      return res.status(422).json({ error: 'Current password is incorrect' });
+    }
+
+    // Save the new password (swap for bcrypt.hash once hashing is added)
+    await User.updatePassword(req.user.userId, newPassword);
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update password' });
+  }
+};

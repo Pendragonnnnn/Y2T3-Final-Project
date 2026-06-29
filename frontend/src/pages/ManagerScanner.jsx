@@ -15,7 +15,7 @@ const QR_ACTIONS = {
   'library-checkout': {
     route: '/reservations/scan-checkout',
     successLabel: 'Checked out',
-    icon: '👋',
+    icon: '✅',
   },
 };
 
@@ -100,7 +100,7 @@ export default function ManagerScanner() {
   return (
     <div className="screen" style={{ padding: 16 }}>
       {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div className="screen-header">
+      <div className="faq-screen-header">
         <div>
           <p className="text-muted">Scanner Station</p>
           <h2 className="screen-title">Scan Student QR</h2>

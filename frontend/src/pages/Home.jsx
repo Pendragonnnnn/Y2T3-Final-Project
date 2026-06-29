@@ -37,17 +37,8 @@ export default function Home() {
   
   return (
     <div className="screen">
-      <div className="screen-header">
-        <div className="welcome-card">
-          <button className="profile-icon" type="button" onClick={() => navigate('/profile')}>
-            <img src={person} alt="Profile" />
-          </button>
-
-          <div className="welcome-text">
-            <p className="text-muted">Welcome back,</p>
-            <h2 className="screen-title">{user?.fullName?.split(' ')[0]} 👋</h2>
-          </div>
-        </div>
+      
+      <div style={{ display: 'flex',  gap: '10px'}}>
         <div
           style={{
             width: 40, height: 40, borderRadius: 12, background: 'var(--color-primary)',
@@ -57,7 +48,14 @@ export default function Home() {
         >
           {user?.fullName?.[0] || 'S'}
         </div>
-      </div>
+        <div>
+          <p className="text-muted">Welcome back,</p>
+          <h2 className="screen-title">{user?.fullName?.split(' ')[0]} 👋</h2>
+        </div>
+          
+        </div>
+        
+        
 
       {/* Seat stats card — Mobile 2 style with two stat pills */}
       <div className="card mt-8" style={{ background: 'linear-gradient(270deg, var(--color-primary), var(--color-primary-light))', padding: 20 }}>

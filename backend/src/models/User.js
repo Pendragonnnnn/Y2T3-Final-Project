@@ -29,7 +29,7 @@ class User {
 
   static async findById(userId) {
     const [rows] = await db.query(
-      `SELECT u.user_id, u.email, u.full_name, u.role, u.created_at,
+      `SELECT u.user_id, u.email, u.full_name, u.role, 
               sp.current_penalty_score
        FROM user u
        LEFT JOIN student_profile sp ON sp.user_id = u.user_id
@@ -54,6 +54,29 @@ class User {
     await db.query(
       'UPDATE student_profile SET current_penalty_score = GREATEST(0, current_penalty_score + ?) WHERE user_id = ?',
       [delta, userId]
+    );
+  }
+
+  /**
+   * Returns the stored password hash/value for a given user.
+   * Used by the change-password flow to verify the current password.
+   */
+  static async getPasswordById(userId) {
+    const [rows] = await db.query(
+      'SELECT password FROM user WHERE user_id = ?',
+      [userId]
+    );
+    return rows[0]?.password ?? null;
+  }
+
+  /**
+   * Overwrites the stored password for a user.
+   * Pass an already-hashed value when bcrypt is added.
+   */
+  static async updatePassword(userId, newPassword) {
+    await db.query(
+      'UPDATE user SET password = ? WHERE user_id = ?',
+      [newPassword, userId]
     );
   }
 }

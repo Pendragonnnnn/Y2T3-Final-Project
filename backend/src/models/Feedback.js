@@ -1,11 +1,11 @@
 const db = require('../config/db');
 
 class Feedback {
-  static async create({ userId, reservationId, starRating, comment, sentiment, confidence }) {
+  static async create({ userId, starRating, comment, sentiment, confidence }) {
     const [result] = await db.query(
-      `INSERT INTO feedback (user_id, reservation_id, star_rating, comment, sentiment, confidence)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [userId, reservationId || null, starRating, comment || null, sentiment, confidence]
+      `INSERT INTO feedback (user_id, star_rating, comment, sentiment, confidence, created_at)
+       VALUES (?, ?, ?, ?, ?, NOW())`,
+      [userId, starRating, comment || null, sentiment, confidence]
     );
     return result.insertId;
   }
@@ -26,9 +26,9 @@ class Feedback {
        WHERE sentiment IS NOT NULL
        GROUP BY sentiment`
     );
-    const breakdown = { frustrated: 0, neutral: 0, satisfied: 0 };
+    const breakdown = { bug: 0, feature_request: 0, management_issue: 0, general: 0 };
     rows.forEach(r => { breakdown[r.sentiment] = r.count; });
-    const total = breakdown.frustrated + breakdown.neutral + breakdown.satisfied;
+    const total = breakdown.bug + breakdown.feature_request + breakdown.management_issue + breakdown.general;
 
     const [avgRows] = await db.query('SELECT AVG(star_rating) as avg_rating FROM feedback');
     const avgRating = avgRows[0].avg_rating ? Number(avgRows[0].avg_rating).toFixed(2) : null;

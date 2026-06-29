@@ -33,8 +33,9 @@ export default function App() {
             <Route path="/home" element={<ProtectedRoute allowedRoles={['student']}><Home /></ProtectedRoute>} />
             <Route path="/map" element={<ProtectedRoute allowedRoles={['student']}><SeatMap /></ProtectedRoute>} />
             <Route path="/reservations" element={<ProtectedRoute allowedRoles={['student']}><MyReservations /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute allowedRoles={['student']}><Profile /></ProtectedRoute>} />
-            <Route path="/feedback" element={<ProtectedRoute allowedRoles={['student']}><Feedback /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute allowedRoles={['student', 'manager']}><Profile /></ProtectedRoute>} />
+            <Route path="/feedback" element={<ProtectedRoute allowedRoles={['student', 'manager']}><Feedback /></ProtectedRoute>} />
+            <Route path="/faq" element={<FAQ />} />
 
             {/* Manager routes */}
             <Route path="/manager" element={<ProtectedRoute allowedRoles={['manager']}><ManagerDashboard /></ProtectedRoute>} />

@@ -3,7 +3,7 @@ const { classifyFeedback } = require('../services/sentimentClassifier');
 
 exports.submitFeedback = async (req, res) => {
   try {
-    const { reservationId, starRating, comment } = req.body;
+    const { starRating, comment } = req.body;
     if (!starRating || starRating < 1 || starRating > 5) {
       return res.status(400).json({ error: 'starRating must be between 1 and 5' });
     }
@@ -12,7 +12,6 @@ exports.submitFeedback = async (req, res) => {
 
     const feedbackId = await Feedback.create({
       userId: req.user.userId,
-      reservationId,
       starRating,
       comment,
       sentiment,

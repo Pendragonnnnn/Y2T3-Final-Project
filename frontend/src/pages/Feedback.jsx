@@ -1,14 +1,19 @@
 import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Button from '../components/Button';
 
 const STARS = [1, 2, 3, 4, 5];
 
+const CATEGORY_LABELS = {
+  bug: 'Bug report',
+  feature_request: 'Feature request',
+  management_issue: 'Management issue',
+  general: 'General comment',
+};
+
 export default function Feedback() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const reservationId = searchParams.get('reservationId');
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -25,7 +30,6 @@ export default function Feedback() {
     setSubmitting(true);
     try {
       const { data } = await api.post('/feedback', {
-        reservationId: reservationId || null,
         starRating: rating,
         comment,
       });
@@ -40,13 +44,14 @@ export default function Feedback() {
   const handleSkip = () => navigate('/home');
 
   if (result) {
+    const label = CATEGORY_LABELS[result.sentiment] || result.sentiment;
     return (
       <div className="screen" style={{ justifyContent: 'center', textAlign: 'center' }}>
         <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
         <h2 className="screen-title" style={{ marginBottom: 8 }}>Thanks for your feedback!</h2>
         <p className="text-muted" style={{ marginBottom: 20 }}>
           Your comment was classified as{' '}
-          <strong style={{ color: 'var(--color-primary)' }}>{result.sentiment}</strong>{' '}
+          <strong style={{ color: 'var(--color-primary)' }}>{label}</strong>{' '}
           ({Math.round(result.confidence * 100)}% confidence)
         </p>
         <Button onClick={() => navigate('/home')}>Back to home</Button>
@@ -56,12 +61,32 @@ export default function Feedback() {
 
   return (
     <div className="screen">
-      <div className="screen-header">
-        <h2 className="screen-title">Rate your experience</h2>
-      </div>
+      <div className="faq-screen-header">
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            background: 'none',
+            border: 'none',
+            fontSize: 22,
+            cursor: 'pointer',
+            color: 'var(--color-text-secondary)',
+            padding: 0,
+            lineHeight: 1,
+            alignSelf: 'flex-start',
+            color: '#0B56A4',
+          }}
+          aria-label="Go back"
+        >
+          く
+        </button>
+
+        <h2 className="screen-title">Feedback</h2>
+
+        <div style={{ width: 22 }} />
+        </div>
 
       <div className="card text-center">
-        <p className="text-muted" style={{ marginBottom: 16 }}>How was your library visit?</p>
+        <p className="text-muted" style={{ marginBottom: 16 }}>How would you rate your experience?</p>
         <div className="flex-row" style={{ justifyContent: 'center', gap: 8 }}>
           {STARS.map((s) => (
             <span
@@ -80,10 +105,10 @@ export default function Feedback() {
       </div>
 
       <div className="field mt-16">
-        <label>Tell us more (optional)</label>
+        <label>Your feedback</label>
         <textarea
           rows={4}
-          placeholder="e.g. The seat map was confusing, or I love being able to check seats before walking over..."
+          placeholder="Your honest feedback is valuable to us..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
@@ -92,7 +117,7 @@ export default function Feedback() {
       {error && <p style={{ color: 'var(--color-danger)', fontSize: 13, marginBottom: 12 }}>{error}</p>}
 
       <Button onClick={handleSubmit} loading={submitting}>Submit feedback</Button>
-      <Button variant="outline" onClick={handleSkip} className="mt-8">Skip</Button>
+
     </div>
   );
 }

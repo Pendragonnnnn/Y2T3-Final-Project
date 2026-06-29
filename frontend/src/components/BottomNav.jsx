@@ -2,9 +2,9 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const STUDENT_TABS = [
-  { to: '/home', icon: '⌂', label: 'Home' },
-  { to: '/map', icon: '▦', label: 'Seat Map' },
-  { to: '/reservations', icon: '☰', label: 'Reservations' },
+  { to: '/home', icon: '🏠︎', label: 'Home' },
+  { to: '/map', icon: '🕮', label: 'Library Map' },
+  { to: '/reservations', icon: '✧', label: 'Reservation' },
   { to: '/profile', icon: '☺', label: 'Profile' },
 ];
 

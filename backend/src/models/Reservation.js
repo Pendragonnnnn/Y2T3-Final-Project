@@ -9,7 +9,10 @@ function normalizeStatus(row) {
 
 function toDbStatus(status) {
   if (typeof status !== 'string') return status;
-  return status.toLowerCase() === 'active' ? 'Active' : 'Pending';
+  const normalized = status.toLowerCase();
+  if (normalized === 'active') return 'Active';
+  if (normalized === 'inactive') return 'Inactive';
+  return 'Pending';
 }
 
 /**
@@ -36,11 +39,10 @@ async function expireStaleReservations() {
 }
 
 class Reservation {
-  static async create({ userId, seatId, scheduledStart }) {
+  static async create(data) {
     const [result] = await db.query(
-      `INSERT INTO active_reservation (user_id, seat_id, scheduled_start, status)
-       VALUES (?, ?, ?, 'Pending')`,
-      [userId, seatId, scheduledStart]
+      "INSERT INTO Reservation_Record (user_id, seat_id, reservation_date, start_time, outcome) VALUES (?, ?, ?, ?, ?)",
+      [data.user_id, data.seat_id, data.reservation_date, data.start_time, data.outcome]
     );
     return result.insertId;
   }
@@ -56,40 +58,22 @@ class Reservation {
 
   static async findById(reservationId) {
     const [rows] = await db.query(
-      'SELECT * FROM active_reservation WHERE reservation_id = ?',
+      'SELECT * FROM Reservation_Record WHERE reservation_id = ?',
       [reservationId]
     );
     return rows[0] || null;
   }
 
   static async findActiveByUser(userId) {
-    const [rows] = await db.query(
-      `SELECT ar.reservation_id, ar.user_id, ar.seat_id, ar.scheduled_start, ar.actual_check_in,
-              LOWER(ar.status) AS status, t.table_label
-       FROM active_reservation ar
-       JOIN seat s ON s.seat_id = ar.seat_id
-       JOIN library_table t ON t.table_id = s.table_id
-       WHERE ar.user_id = ? AND ar.status IN ('Pending', 'Active')
-       ORDER BY ar.scheduled_start DESC`,
-      [userId]
-    );
-    return rows;
-  }
-
-  // Fetches Pending + Active reservations for the manager dashboard.
-  // Pending always floats to the top, then sorted by date within each group.
-  static async listActiveAndPending() {
     await expireStaleReservations();
     const [rows] = await db.query(
-      `SELECT r.*, u.full_name, u.email, t.table_label
+      `SELECT r.*, t.table_label
        FROM Reservation_Record r
-       JOIN User u ON u.user_id = r.user_id
        JOIN Seat s ON s.seat_id = r.seat_id
        JOIN Library_Table t ON t.table_id = s.table_id
-       WHERE r.outcome IN ('Pending', 'Active')
-       ORDER BY
-         CASE r.outcome WHEN 'Pending' THEN 0 ELSE 1 END ASC,
-         r.reservation_date ASC`
+       WHERE r.user_id = ? AND r.outcome IN ('Pending', 'Active')
+       ORDER BY r.reservation_date DESC`,
+      [userId]
     );
     return rows;
   }
@@ -114,67 +98,63 @@ class Reservation {
 
   static async listAll() {
     const [rows] = await db.query(
-      `SELECT ar.reservation_id, ar.user_id, ar.seat_id, ar.scheduled_start, ar.actual_check_in,
-              LOWER(ar.status) AS status, u.full_name, u.email, t.table_label
-       FROM active_reservation ar
-       JOIN user u ON u.user_id = ar.user_id
-       JOIN seat s ON s.seat_id = ar.seat_id
-       JOIN library_table t ON t.table_id = s.table_id
-       ORDER BY ar.scheduled_start DESC`
+      `SELECT r.*, u.full_name, u.email, t.table_label
+       FROM Reservation_Record r
+       JOIN User u ON u.user_id = r.user_id
+       JOIN Seat s ON s.seat_id = r.seat_id
+       JOIN Library_Table t ON t.table_id = s.table_id
+       ORDER BY r.reservation_date DESC`
     );
     return rows;
   }
 
   static async listPending() {
+    await expireStaleReservations();
     const [rows] = await db.query(
-      `SELECT ar.reservation_id, ar.user_id, ar.seat_id, ar.scheduled_start, ar.actual_check_in,
-              LOWER(ar.status) AS status, u.full_name, u.email, t.table_label
-       FROM active_reservation ar
-       JOIN user u ON u.user_id = ar.user_id
-       JOIN seat s ON s.seat_id = ar.seat_id
-       JOIN library_table t ON t.table_id = s.table_id
-       WHERE ar.status = 'Pending'
-       ORDER BY ar.scheduled_start ASC`
+      `SELECT r.*, u.full_name, u.email, t.table_label
+       FROM Reservation_Record r
+       JOIN User u ON u.user_id = r.user_id
+       JOIN Seat s ON s.seat_id = r.seat_id
+       JOIN Library_Table t ON t.table_id = s.table_id
+       WHERE r.outcome = 'Pending'
+       ORDER BY r.reservation_date ASC`
     );
     return rows;
   }
 
-  static async updateStatus(reservationId, status) {
-    const dbStatus = toDbStatus(status);
+  static async updateOutcome(reservationId, outcome) {
     await db.query(
-      'UPDATE active_reservation SET status = ? WHERE reservation_id = ?',
-      [dbStatus, reservationId]
+      'UPDATE Reservation_Record SET outcome = ? WHERE reservation_id = ?',
+      [outcome, reservationId]
     );
   }
 
   static async setCheckIn(reservationId, time) {
     await db.query(
-      "UPDATE active_reservation SET actual_check_in = ?, status = 'Active' WHERE reservation_id = ?",
+      "UPDATE Reservation_Record SET check_in_time = ?, outcome = 'Active' WHERE reservation_id = ?",
       [time, reservationId]
     );
   }
 
-  static async delete(reservationId) {
-    await db.query('DELETE FROM active_reservation WHERE reservation_id = ?', [reservationId]);
+  static async finalizeReservation(reservationId, endTime, outcome) {
+    await db.query(
+      "UPDATE Reservation_Record SET end_time = ?, outcome = ? WHERE reservation_id = ?",
+      [endTime, outcome, reservationId]
+    );
   }
 
-  static async archive({ userId, seatId, reservationDate, endTime, outcome }) {
-    await db.query(
-      `INSERT INTO reservation_history (user_id, seat_id, reservation_date, end_time, outcome)
-       VALUES (?, ?, ?, ?, ?)`,
-      [userId, seatId, reservationDate, endTime, toDbOutcome(outcome)]
-    );
+  static async delete(reservationId) {
+    await db.query('DELETE FROM Reservation_Record WHERE reservation_id = ?', [reservationId]);
   }
 
   static async historyByUser(userId) {
     const [rows] = await db.query(
-      `SELECT rh.history_id, rh.user_id, rh.seat_id, rh.reservation_date, rh.end_time,
-              LOWER(REPLACE(rh.outcome, '-', '_')) AS outcome, t.table_label
-       FROM reservation_history rh
-       JOIN seat s ON s.seat_id = rh.seat_id
-       JOIN library_table t ON t.table_id = s.table_id
-       WHERE rh.user_id = ?
-       ORDER BY rh.reservation_date DESC`,
+      `SELECT r.*, t.table_label
+       FROM Reservation_Record r
+       JOIN Seat s ON s.seat_id = r.seat_id
+       JOIN Library_Table t ON t.table_id = s.table_id
+       WHERE r.user_id = ? AND r.outcome = 'Inactive'
+       ORDER BY r.reservation_date DESC`,
       [userId]
     );
     return rows;

@@ -43,6 +43,7 @@ export default function App() {
             <Route path="/manager" element={<ProtectedRoute allowedRoles={['manager']}><ManagerDashboard /></ProtectedRoute>} />
             <Route path="/manager/students" element={<ProtectedRoute allowedRoles={['manager']}><ManagerStudents /></ProtectedRoute>} />
             <Route path="/manager/report" element={<ProtectedRoute allowedRoles={['manager']}><ManagerReport /></ProtectedRoute>} />
+            <Route path="/manager/scan" element={<ProtectedRoute allowedRoles={['manager']}><ManagerScanner /></ProtectedRoute>} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

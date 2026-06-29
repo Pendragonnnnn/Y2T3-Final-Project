@@ -10,13 +10,15 @@ class Seat {
   static async getMap() {
     const [rows] = await db.query(
       `SELECT s.seat_id, LOWER(s.current_status) AS current_status,
-              t.table_id, t.table_label
-       FROM seat s
-       JOIN library_table t ON t.table_id = s.table_id
+              t.table_id, t.table_label, t.positionX, t.positionY, t.rotation
+       FROM library_table t
+       LEFT JOIN seat s ON t.table_id = s.table_id
        ORDER BY t.table_label, s.seat_id`
     );
     return rows;
   }
+
+  
 
   static async findById(seatId) {
     const [rows] = await db.query('SELECT * FROM seat WHERE seat_id = ?', [seatId]);
@@ -32,7 +34,7 @@ class Seat {
 
   static async updateStatus(seatId, status) {
     const dbStatus = typeof status === 'string' ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : status;
-    await db.query('UPDATE seat SET current_status = ? WHERE seat_id = ?', [dbStatus, seatId]);
+    await db.query('UPDATE Seat SET current_status = ? WHERE seat_id = ?', [dbStatus, seatId]);
   }
 
   static async getStats() {

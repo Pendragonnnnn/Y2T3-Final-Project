@@ -1,5 +1,9 @@
+const path = require('path');
+// This tells dotenv to look for the .env file in the root directory
+// regardless of where db.js is located
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const mysql = require('mysql2/promise');
-require('dotenv').config();
+
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -12,4 +16,12 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
+// Example in your db.js or config file
+console.log('--- DATABASE CONNECTION INFO ---');
+console.log('Host:', process.env.DB_HOST);
+console.log('Database Name:', process.env.DB_NAME);
+console.log('User:', process.env.DB_USER);
+console.log('--------------------------------');
+
 module.exports = pool;
+

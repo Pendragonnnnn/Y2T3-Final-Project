@@ -125,7 +125,7 @@ a { text-decoration: none; color: inherit; }
   padding-bottom: 90px;
   overflow-y: auto; /* Adds a scrollbar inside the screen instead of pushing the footer */
   width: 100%;
-  background: linear-gradient(160deg,rgba(209, 226, 243, 1) 7%,rgba(204, 222, 241, 1) 10%,rgba(0, 62, 195, 1) 100%)
+  background: white;
 }
 
 .faq-screen-header{

@@ -50,6 +50,10 @@ export default function ManagerDashboard() {
           <h2 className="screen-title">Reservations</h2>
         </div>
         <button onClick={handleLogout} style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>Log out</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <Button variant="outline" size="sm" onClick={() => navigate('/manager/scan')}>Scan QR</Button>
+          
+        </div>
       </div>
 
       <div style={{ alignSelf: "center", marginTop: '20px', padding: '0 40px 20px 40px', fontWeight: 500, borderBottom:'1px solid #0B56A4' }}>

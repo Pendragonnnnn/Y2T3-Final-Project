@@ -27,7 +27,7 @@ class Feedback {
        GROUP BY sentiment`
     );
     const breakdown = { bug: 0, feature_request: 0, management_issue: 0, general: 0 };
-    rows.forEach(r => { breakdown[r.sentiment] = r.count; });
+    rows.forEach(r => { breakdown[r.sentiment.toLowerCase()] = r.count; });
     const total = breakdown.bug + breakdown.feature_request + breakdown.management_issue + breakdown.general;
 
     const [avgRows] = await db.query('SELECT AVG(star_rating) as avg_rating FROM feedback');

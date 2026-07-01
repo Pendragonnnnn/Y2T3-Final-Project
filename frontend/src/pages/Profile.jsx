@@ -25,7 +25,9 @@ export default function Profile() {
 
   // Dark mode state
   const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('sl_dark_mode') === 'true';
+    const stored = localStorage.getItem('sl_dark_mode');
+    if (stored !== null) return stored === 'true';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   useEffect(() => {
@@ -33,12 +35,8 @@ export default function Profile() {
   }, []);
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-    localStorage.setItem('sl_dark_mode', darkMode);
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('sl_dark_mode', String(darkMode));
   }, [darkMode]);
 
   const handleEditName = () => {
@@ -126,7 +124,7 @@ export default function Profile() {
                 disabled={nameLoading}
                 style={{
                   padding: '6px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-                  background: 'var(--color-primary)', color: '#fff',
+                  background: 'var(--color-primary)',
                   cursor: nameLoading ? 'not-allowed' : 'pointer', opacity: nameLoading ? 0.6 : 1,
                 }}
               >
@@ -211,7 +209,7 @@ export default function Profile() {
               <p style={{ fontWeight: 600 }}>Dark mode</p>
             </div>
             <div onClick={() => setDarkMode(v => !v)} style={{ width: 48, height: 28, borderRadius: 999, background: darkMode ? 'var(--color-primary)' : 'var(--color-border)', position: 'relative', cursor: 'pointer', transition: 'background 0.2s ease', flexShrink: 0 }}>
-              <div style={{ position: 'absolute', top: 3, left: darkMode ? 23 : 3, width: 22, height: 22, borderRadius: '50%', background: 'white', boxShadow: '0 1px 4px rgba(0,0,0,0.18)', transition: 'left 0.2s ease' }} />
+              <div style={{ position: 'absolute', top: 3, left: darkMode ? 23 : 3, width: 22, height: 22, borderRadius: '50%', background: 'var(--color-surface)', boxShadow: '0 1px 4px rgba(0,0,0,0.18)', transition: 'left 0.2s ease' }} />
             </div>
           </div>
         </div>
@@ -230,7 +228,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <div style={{ border: '1px solid', marginTop: '32px', borderRadius: '16px', color: '#b7b7b7ad', backgroundColor: '#ffffff' }}>
+      <div style={{ border: '1px solid', marginTop: '32px', borderRadius: '16px', color: '#b7b7b7ad' }}>
         <button onClick={handleLogout} className="logout-button">Log out</button>
       </div>
 

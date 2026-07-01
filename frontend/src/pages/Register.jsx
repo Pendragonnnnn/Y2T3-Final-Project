@@ -29,7 +29,7 @@ export default function Register() {
   };
 
   return (
-    <div className="screen" style={{ justifyContent: 'center', background: 'white' }}>
+    <div className="screen" style={{ justifyContent: 'center' }}>
       <div className="screen-header">
         <h2 className="screen-title">Create account</h2>
       </div>

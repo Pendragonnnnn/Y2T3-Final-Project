@@ -39,7 +39,6 @@ export default function StudentHistory() {
             border: 'none',
             fontSize: 22,
             cursor: 'pointer',
-            color: 'var(--color-text-secondary)',
             padding: 0,
             lineHeight: 1,
             alignSelf: 'flex-start',

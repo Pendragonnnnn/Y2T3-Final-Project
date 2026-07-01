@@ -5,7 +5,6 @@ const AuthContext = createContext(null);
 
 function normalizeUser(user) {
   if (!user) return null;
-
   return {
     ...user,
     role: typeof user.role === 'string' ? user.role.toLowerCase() : user.role,
@@ -64,8 +63,18 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  // Updates the user in both state and localStorage so name changes
+  // are reflected everywhere instantly without a re-login.
+  const updateUser = useCallback((patch) => {
+    setUser(prev => {
+      const updated = normalizeUser({ ...prev, ...patch });
+      localStorage.setItem('sl_user', JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading, error }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updateUser, loading, error }}>
       {children}
     </AuthContext.Provider>
   );

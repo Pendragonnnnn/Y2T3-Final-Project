@@ -8,322 +8,312 @@ const SEAT_OFFSETS = [
 ];
 
 const OBSTACLES = [
-  { id: 'wall-1', x: 590, y: 150, width: 40, height: 200, rotation: 0 },
-  { id: 'pillar-1', x: 550, y: 870, width: 40, height: 100, rotation: 0 },
-  { id: 'shelf-1', x: 1510, y: 600, width: 40, height: 370, rotation: 0 },
-  { id: 'shelf-2', x: 1510, y: 200, width: 40, height: 370, rotation: 0 },
-  { id: 'door-1', x: 12, y: 750, width: 90, height: 70, rotation: 90, shape: 'semi-circle'},
+  { id: 'wall-1',   x: 590,  y: 150, width: 40, height: 200, rotation: 0 },
+  { id: 'pillar-1', x: 550,  y: 870, width: 40, height: 100, rotation: 0 },
+  { id: 'shelf-1',  x: 1510, y: 600, width: 40, height: 370, rotation: 0 },
+  { id: 'shelf-2',  x: 1510, y: 200, width: 40, height: 370, rotation: 0 },
+  { id: 'door-1',   x: 12,   y: 750, width: 90, height: 70,  rotation: 90, shape: 'semi-circle' },
 ];
 
-
-const SCENE_WIDTH = 1180*1.333;
-const SCENE_HEIGHT = 900*1.333;
-
-const MIN_SCALE = 0.4;
-const MAX_SCALE = 1.35;
-const ZOOM_STEP = 0.04;
-
-// Pointer needs to move this many px before a press counts as a drag
-// rather than a tap (otherwise a tiny shake while tapping a seat would
-// get swallowed as a "pan").
+const SCENE_WIDTH  = 1180 * 1.333;
+const SCENE_HEIGHT = 900  * 1.333;
+const MIN_SCALE    = 0.4;
+const MAX_SCALE    = 1.35;
+const ZOOM_STEP    = 0.04;
 const DRAG_THRESHOLD = 4;
 
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
-}
+function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
 
 function groupSeats(seats) {
   return seats.reduce((acc, seat) => {
-    
     if (!acc[seat.table_id]) acc[seat.table_id] = [];
     acc[seat.table_id].push(seat);
     return acc;
   }, {});
 }
 
-// How far the scene is allowed to translate at a given scale so it never
-// reveals empty space past its own edges inside the container.
-function getPanBounds(scale, containerWidth, containerHeight) {
-  const scaledWidth = SCENE_WIDTH * scale;
-  const scaledHeight = SCENE_HEIGHT * scale;
-
-  const minX = Math.min(0, containerWidth - scaledWidth);
-  const maxX = Math.max(0, containerWidth - scaledWidth);
-  const minY = Math.min(0, containerHeight - scaledHeight);
-  const maxY = Math.max(0, containerHeight - scaledHeight);
-
-  return { minX, maxX, minY, maxY };
-}
-
-function getCenteredView(scale, containerWidth, containerHeight) {
-  const scaledWidth = SCENE_WIDTH * scale;
-  const scaledHeight = SCENE_HEIGHT * scale;
-  const bounds = getPanBounds(scale, containerWidth, containerHeight);
-
+function getPanBounds(scale, cW, cH) {
+  const sW = SCENE_WIDTH * scale, sH = SCENE_HEIGHT * scale;
   return {
-    scale,
-    x: clamp((containerWidth - scaledWidth) / 2, bounds.minX, bounds.maxX),
-    y: clamp((containerHeight - scaledHeight) / 2, bounds.minY, bounds.maxY),
+    minX: Math.min(0, cW - sW), maxX: Math.max(0, cW - sW),
+    minY: Math.min(0, cH - sH), maxY: Math.max(0, cH - sH),
   };
 }
 
-export default function InteractiveSeatMap({ seats, selectedSeatId, onSelectSeat, interactive = true }) {
+function getCenteredView(scale, cW, cH) {
+  const sW = SCENE_WIDTH * scale, sH = SCENE_HEIGHT * scale;
+  const b = getPanBounds(scale, cW, cH);
+  return { scale, x: clamp((cW - sW) / 2, b.minX, b.maxX), y: clamp((cH - sH) / 2, b.minY, b.maxY) };
+}
+
+function getInitials(name) {
+  if (!name) return '?';
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+// Student-mode palette (light, airy)
+const STUDENT_SEAT_CONFIG = {
+  available: { bg: '#dcfce7', border: '#16a34a', color: '#15803d' },
+  occupied:  { bg: '#fee2e2', border: '#dc2626', color: '#b91c1c' },
+  blocked:   { bg: '#f1f5f9', border: '#94a3b8', color: '#64748b' },
+};
+
+// Manager-mode palette (dark, utilitarian)
+const MANAGER_SEAT_CONFIG = {
+  available: { bg: 'rgba(34,197,94,0.15)',  border: '#22c55e', color: '#4ade80' },
+  occupied:  { bg: 'rgba(251,146,60,0.18)', border: '#f97316', color: '#fb923c' },
+  blocked:   { bg: 'rgba(100,116,139,0.2)', border: '#475569', color: '#94a3b8' },
+};
+
+/**
+ * Shared seat map component.
+ *
+ * mode="student" (default):
+ *   - Light background, tapping an available seat selects it (for reserving)
+ *   - onSelectSeat(seat) fires on tap
+ *
+ * mode="manager":
+ *   - Dark background, occupied seats show occupant initials
+ *   - Tapping ANY seat (regardless of status) fires onSeatAction-driven bottom sheet
+ *   - onManagerSeatTap(seat) fires on tap — parent renders the open/block bottom sheet
+ */
+export default function InteractiveSeatMap({
+  seats,
+  selectedSeatId,
+  onSelectSeat,
+  interactive = true,
+  mode = 'student',
+  onManagerSeatTap,
+}) {
+  const isManager = mode === 'manager';
+  const SEAT_CONFIG = isManager ? MANAGER_SEAT_CONFIG : STUDENT_SEAT_CONFIG;
+
   const containerRef = useRef(null);
-  const dragState = useRef({
-    pointerId: null,
-    startX: 0,
-    startY: 0,
-    originX: 0,
-    originY: 0,
-    moved: false,
-  });
-
-  const [view, setView] = useState({ x: 0, y: 0, scale: 1 });
+  const dragState = useRef({ pointerId: null, startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
+  const [view, setView]       = useState({ x: 0, y: 0, scale: 1 });
   const [panning, setPanning] = useState(false);
-
   const grouped = useMemo(() => groupSeats(seats), [seats]);
 
-  const centerView = (scale = 1) => {
-    const container = containerRef.current;
-    if (!container) return;
-    setView(getCenteredView(scale, container.clientWidth, container.clientHeight));
-  };
-
-  // Center on first mount. useLayoutEffect avoids a one-frame flash at (0,0)
-  // before we know the real container size.
   useLayoutEffect(() => {
-    centerView(1);
+    const c = containerRef.current;
+    if (c) setView(getCenteredView(1, c.clientWidth, c.clientHeight));
   }, []);
 
-  // If the container changes size later (e.g. orientation change, sidebar
-  // toggle), re-clamp so the current view can't end up out of bounds.
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container || typeof ResizeObserver === 'undefined') return undefined;
-
-    const observer = new ResizeObserver(() => {
-      setView((current) => {
-        const bounds = getPanBounds(current.scale, container.clientWidth, container.clientHeight);
-        return {
-          ...current,
-          x: clamp(current.x, bounds.minX, bounds.maxX),
-          y: clamp(current.y, bounds.minY, bounds.maxY),
-        };
-      });
-    });
-
-    observer.observe(container);
-    return () => observer.disconnect();
+    const c = containerRef.current;
+    if (!c || typeof ResizeObserver === 'undefined') return;
+    const obs = new ResizeObserver(() =>
+      setView(cur => {
+        const b = getPanBounds(cur.scale, c.clientWidth, c.clientHeight);
+        return { ...cur, x: clamp(cur.x, b.minX, b.maxX), y: clamp(cur.y, b.minY, b.maxY) };
+      })
+    );
+    obs.observe(c);
+    return () => obs.disconnect();
   }, []);
 
-  const beginPan = (clientX, clientY, pointerId) => {
-    setView((current) => {
-      dragState.current = {
-        pointerId,
-        startX: clientX,
-        startY: clientY,
-        originX: current.x,
-        originY: current.y,
-        moved: false,
-      };
-      return current;
-    });
+  const beginPan = (cx, cy, pid) => {
+    setView(cur => { dragState.current = { pointerId: pid, startX: cx, startY: cy, originX: cur.x, originY: cur.y, moved: false }; return cur; });
     setPanning(true);
   };
+  const updatePan = (cx, cy) => {
+    const d = dragState.current; if (d.pointerId === null) return;
+    const c = containerRef.current; if (!c) return;
+    const dx = cx - d.startX, dy = cy - d.startY;
+    if (!d.moved && Math.hypot(dx, dy) > DRAG_THRESHOLD) d.moved = true;
+    setView(cur => { const b = getPanBounds(cur.scale, c.clientWidth, c.clientHeight); return { ...cur, x: clamp(d.originX + dx, b.minX, b.maxX), y: clamp(d.originY + dy, b.minY, b.maxY) }; });
+  };
+  const endPan = () => { dragState.current.pointerId = null; setPanning(false); };
 
-  const updatePan = (clientX, clientY) => {
-    const drag = dragState.current;
-    if (drag.pointerId === null) return;
-
-    const container = containerRef.current;
-    if (!container) return;
-
-    const dx = clientX - drag.startX;
-    const dy = clientY - drag.startY;
-
-    if (!drag.moved && Math.hypot(dx, dy) > DRAG_THRESHOLD) {
-      drag.moved = true;
+  const handlePointerDown = e => {
+    if (e.target.closest('button')) {
+      // Reset stale drag state so a tap on a seat isn't mistaken for
+      // a leftover drag from a previous pan gesture.
+      dragState.current.moved = false;
+      return;
     }
-
-    setView((current) => {
-      const bounds = getPanBounds(current.scale, container.clientWidth, container.clientHeight);
-      return {
-        ...current,
-        x: clamp(drag.originX + dx, bounds.minX, bounds.maxX),
-        y: clamp(drag.originY + dy, bounds.minY, bounds.maxY),
-      };
-    });
-  };
-
-  const endPan = () => {
-    dragState.current.pointerId = null;
-    setPanning(false);
-  };
-
-  const handlePointerDown = (e) => {
-    if (e.target.closest('button')) return;
     if (e.button !== undefined && e.button !== 0) return;
-    
     e.preventDefault();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     beginPan(e.clientX, e.clientY, e.pointerId);
   };
 
-  const handlePointerMove = (e) => {
-    if (dragState.current.pointerId === null) return;
-    updatePan(e.clientX, e.clientY);
-  };
-
-  const handlePointerUp = () => endPan();
-
-  // Wheel is the one event that genuinely needs a non-passive native
-  // listener (React's synthetic onWheel is passive by default, so
-  // preventDefault inside it is silently ignored).
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return undefined;
-
-    const onWheel = (e) => {
+    const c = containerRef.current; if (!c) return;
+    const onWheel = e => {
       e.preventDefault();
-
-      const rect = container.getBoundingClientRect();
-      const pointerX = e.clientX - rect.left;
-      const pointerY = e.clientY - rect.top;
+      const rect = c.getBoundingClientRect();
+      const px = e.clientX - rect.left, py = e.clientY - rect.top;
       const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-
-      setView((current) => {
-        const nextScale = clamp(Number((current.scale + delta).toFixed(2)), MIN_SCALE, MAX_SCALE);
-        if (nextScale === current.scale) return current;
-
-        // Keep the point under the cursor visually fixed while zooming,
-        // instead of always scaling from the scene's top-left corner.
-        const scaleRatio = nextScale / current.scale;
-        const nextX = pointerX - (pointerX - current.x) * scaleRatio;
-        const nextY = pointerY - (pointerY - current.y) * scaleRatio;
-
-        const bounds = getPanBounds(nextScale, container.clientWidth, container.clientHeight);
-        return {
-          scale: nextScale,
-          x: clamp(nextX, bounds.minX, bounds.maxX),
-          y: clamp(nextY, bounds.minY, bounds.maxY),
-        };
+      setView(cur => {
+        const ns = clamp(Number((cur.scale + delta).toFixed(2)), MIN_SCALE, MAX_SCALE);
+        if (ns === cur.scale) return cur;
+        const r = ns / cur.scale;
+        const b = getPanBounds(ns, c.clientWidth, c.clientHeight);
+        return { scale: ns, x: clamp(px - (px - cur.x) * r, b.minX, b.maxX), y: clamp(py - (py - cur.y) * r, b.minY, b.maxY) };
       });
     };
-
-    container.addEventListener('wheel', onWheel, { passive: false });
-    return () => container.removeEventListener('wheel', onWheel);
+    c.addEventListener('wheel', onWheel, { passive: false });
+    return () => c.removeEventListener('wheel', onWheel);
   }, []);
 
   const handleSeatClick = (seat) => {
-    
-    if (interactive && seat.current_status === 'available') {
-    onSelectSeat?.(seat);
-  }
-  };
-  const isSeatSelectable = (seat, interactive) => {
-  return interactive && seat.current_status === 'available';
-};
+    console.log('handleSeatClick fired', seat, 'isManager:', isManager, 'moved:', dragState.current.moved);
+    if (dragState.current.moved) return; // was a drag, not a tap
 
+    if (isManager) {
+      onManagerSeatTap?.(seat);
+      return;
+    }
+
+    if (interactive && seat.current_status === 'available') {
+      onSelectSeat?.(seat);
+    }
+    console.log(seat);
+  };
+
+  const isSeatSelectable = (seat) => {
+    if (isManager) return true; // any seat is tappable in manager mode
+    return interactive && seat.current_status === 'available';
+  };
+
+  const availableCount = seats.filter(s => s.current_status === 'available').length;
+  const occupiedCount  = seats.filter(s => s.current_status === 'occupied').length;
+  const blockedCount   = seats.filter(s => s.current_status === 'blocked').length;
 
   return (
-    <div className="interactive-map-shell">
-      <div className="flex-between mb-16" style={{ gap: 1 }}>
-        <p className="text-muted" style={{ fontSize: 12 }}>Drag to pan. Use the wheel to zoom.</p>
-      </div>
-      
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 
+      {/* ── Legend strip ── */}
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'space-between' }}>
+        <p style={{ fontSize: 11, color: isManager ? '#475569' : 'var(--color-text-tertiary)' }}>
+          {isManager ? 'Tap a seat to manage it' : 'Drag to pan · scroll to zoom'}
+        </p>
+      </div>
+
+      {/* ── Map canvas ── */}
       <div
         ref={containerRef}
-        className="interactive-map-canvas"
-        style={{ cursor: panning ? 'grabbing' : 'grab', touchAction: 'none' }}
+        style={{
+          position: 'relative', width: '100%', height: 520,
+          overflow: 'hidden', borderRadius: isManager ? 16 : 20,
+          background: isManager ? '#0f172a' : '#3d4a5c',
+          border: isManager ? '1.5px solid #1e293b' : '1.5px solid #5a6a80',
+          boxShadow: isManager ? '0 8px 32px rgba(0,0,0,0.4)' : '0 12px 40px rgba(0,0,0,0.18)',
+          cursor: panning ? 'grabbing' : 'grab',
+          touchAction: 'none',
+        }}
         onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+        onPointerMove={e => { if (dragState.current.pointerId !== null) updatePan(e.clientX, e.clientY); }}
+        onPointerUp={endPan}
+        onPointerCancel={endPan}
       >
-        
-        <div
-          className="interactive-map-scene"
-          style={{
-            width: SCENE_WIDTH,
-            height: SCENE_HEIGHT,
-            transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
-            transformOrigin: '0 0',
-          }}
-        >
-          
-          {/* Render Obstacles */}
-        {OBSTACLES.map((obstacle) => (
-          <div
-            key={obstacle.id}
-            className="map-obstacle"
-            style={{
-              position: 'absolute',
-              left: `${obstacle.x}px`,
-              top: `${obstacle.y}px`,
-              width: `${obstacle.width}px`,
-              height: `${obstacle.height}px`,
-              transform: `rotate(${obstacle.rotation}deg)`,
-              background: "linear-gradient(1350deg, #b4d2fe58 0%, #749edc1e 100%)", // Your blue obstruction color
-              pointerEvents: 'none', // Ensures they don't block mouse interactions
-              borderColor: "#2c2c2d",
-              boxShadow: "inset 5px 0px 4px rgba(104, 104, 104, 0.28)",
-              borderRadius: obstacle.shape === 'semi-circle' ? `${obstacle.width / 2}px ${obstacle.width / 2}px 0 0` : '4px',
-            }}
-          />
-        ))}
-          <div className="interactive-map-floor" />
-          <div className="interactive-map-aisle interactive-map-aisle-vertical" />
-          <div className="interactive-map-aisle interactive-map-aisle-horizontal" />
+        <div style={{
+          position: 'absolute', left: 0, top: 0,
+          width: SCENE_WIDTH, height: SCENE_HEIGHT,
+          transform: `translate(${view.x}px,${view.y}px) scale(${view.scale})`,
+          transformOrigin: '0 0',
+        }}>
+          {/* Floor */}
+          <div style={{
+            position: 'absolute', inset: 20, borderRadius: 24,
+            background: isManager ? '#1a2332' : '#4a5568',
+            border: isManager ? '1px solid #243044' : '1px solid #607080',
+            boxShadow: isManager ? 'none' : 'inset 0 0 60px rgba(0,0,0,0.25)',
+          }} />
 
+          {/* Grid lines */}
+          <svg style={{ position: 'absolute', inset: 20, pointerEvents: 'none', opacity: isManager ? 0.06 : 0.08 }}
+            width={SCENE_WIDTH - 40} height={SCENE_HEIGHT - 40}>
+            {Array.from({ length: 30 }, (_, i) => (
+              <line key={`v${i}`} x1={i * 60} y1={0} x2={i * 60} y2={SCENE_HEIGHT} stroke={isManager ? '#94a3b8' : '#fff'} strokeWidth={1} />
+            ))}
+            {Array.from({ length: 22 }, (_, i) => (
+              <line key={`h${i}`} x1={0} y1={i * 60} x2={SCENE_WIDTH} y2={i * 60} stroke={isManager ? '#94a3b8' : '#fff'} strokeWidth={1} />
+            ))}
+          </svg>
+
+          {/* Obstacles */}
+          {OBSTACLES.map(o => (
+            <div key={o.id} style={{
+              position: 'absolute', left: o.x, top: o.y, width: o.width, height: o.height,
+              transform: `rotate(${o.rotation}deg)`,
+              background: isManager
+                ? 'rgba(30,41,59,0.8)'
+                : 'linear-gradient(135deg, rgba(180,210,254,0.12) 0%, rgba(116,158,220,0.08) 100%)',
+              border: isManager ? '1px solid #334155' : '1.5px solid rgba(115,159,206,0.3)',
+              boxShadow: isManager ? 'none' : 'inset 3px 0 6px rgba(104,104,104,0.15)',
+              borderRadius: o.shape === 'semi-circle' ? `${o.width / 2}px ${o.width / 2}px 0 0` : 6,
+              pointerEvents: 'none',
+            }} />
+          ))}
+
+          {/* Tables + seats */}
           {Object.entries(grouped).map(([tableId, tableSeats]) => {
-  // Only declare these once!
-          const tableData = tableSeats[0]; 
-          const label = tableData.table_label;
-          const posX = (tableData.positionX)*1.333;
-          const posY = (tableData.positionY)*1.333;
-          const rotation = (tableData.rotation) ?? 0;
+            const td = tableSeats[0];
+            const posX = td.positionX * 1.333;
+            const posY = td.positionY * 1.333;
+            const rotation = td.rotation ?? 0;
 
-          return (
-            <div
-              key={tableId}
-              className="interactive-map-table"
-              style={{ 
-                position: 'absolute', 
-                left: posX, 
-                top: posY, 
-                transform: `rotate(${rotation}deg)` 
-              }}
-            >
-              <div className="interactive-map-table-surface" />
-              
+            return (
+              <div key={tableId} style={{ position: 'absolute', left: posX, top: posY, width: 220, height: 160, transform: `rotate(${rotation}deg)` }}>
+                {/* Table surface */}
+                <div style={{
+                  position: 'absolute', inset: 34,
+                  background: isManager ? '#243044' : 'linear-gradient(145deg, #8fa3ba, #7a8fa5)',
+                  borderRadius: isManager ? 4 : 6,
+                  border: isManager ? '1px solid #2d3f58' : '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: isManager
+                    ? 'inset 0 1px 4px rgba(0,0,0,0.5)'
+                    : 'inset 0 2px 8px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)',
+                }} />
 
-              {tableSeats.slice(0, 4).map((seat, index) => {
-                const seatOffset = SEAT_OFFSETS[index] || SEAT_OFFSETS[0];
-                const isSelected = seat.seat_id === selectedSeatId;
-                const isAvailable = seat.current_status === 'available';
+                {/* Seats */}
+                {tableSeats.slice(0, 4).map((seat, idx) => {
+                  const offset = SEAT_OFFSETS[idx] || SEAT_OFFSETS[0];
+                  const isSelected = seat.seat_id === selectedSeatId;
+                  const cfg = SEAT_CONFIG[seat.current_status] || SEAT_CONFIG.blocked;
+                  const canTap = isSeatSelectable(seat);
+                  const hasOccupant = isManager && seat.current_status === 'occupied' && seat.occupant_name;
 
-                return (
-                  <button
-                    key={seat.seat_id}
-                    type="button"
-                    className={`seat-cell interactive-seat ${seat.current_status}${isSelected ? ' selected' : ''}`}
-                    style={{
-                      left: seatOffset.x,
-                      top: seatOffset.y,
-                      transform: `rotate(${-rotation}deg)`
-                    }}
-                    onClick={() => isSeatSelectable(seat, interactive) && onSelectSeat?.(seat)}
-  disabled={interactive && seat.current_status !== 'available'}
-                    data-status={seat.current_status.toUpperCase()}
-                  >
-                    ▢
-                  </button>
-                );
-              })}
-            </div>
-          );
-        })}
+                  return (
+                    <button
+                      key={seat.seat_id}
+                      type="button"
+                      disabled={!isManager && interactive && seat.current_status !== 'available'}
+                      onClick={() => canTap && handleSeatClick(seat)}
+                      style={{
+                        position: 'absolute',
+                        left: offset.x, top: offset.y,
+                        width: 44, height: 44,
+                        borderRadius: '50%',
+                        transform: `rotate(${-rotation}deg)`,
+                        background: isSelected
+                          ? (isManager ? 'rgba(99,102,241,0.35)' : 'var(--color-primary)')
+                          : cfg.bg,
+                        border: `2px solid ${isSelected ? (isManager ? '#818cf8' : 'var(--color-primary)') : cfg.border}`,
+                        color: isSelected ? (isManager ? '#c7d2fe' : '#fff') : cfg.color,
+                        fontSize: hasOccupant ? 9 : 10,
+                        fontWeight: 700,
+                        cursor: canTap ? 'pointer' : 'not-allowed',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: isSelected
+                          ? (isManager
+                              ? '0 0 0 3px rgba(99,102,241,0.3), 0 4px 12px rgba(0,0,0,0.4)'
+                              : '0 0 0 3px rgba(11,86,164,0.35), 0 4px 12px rgba(11,86,164,0.4)')
+                          : (isManager ? `0 0 8px ${cfg.border}22, 0 2px 6px rgba(0,0,0,0.3)` : '0 3px 8px rgba(0,0,0,0.25)'),
+                        transition: 'all 0.15s ease',
+                        opacity: !isManager && seat.current_status === 'blocked' ? 0.6 : 1,
+                      }}
+                      title={`${(seat.current_status).toUpperCase()}`}
+                    >
+                      {isManager ? seat.seat_id: ""}
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -13,7 +13,10 @@ import ManagerDashboard from './pages/ManagerDashboard';
 import ManagerStudents from './pages/ManagerStudents';
 import ManagerReport from './pages/ManagerReport';
 import ManagerScanner from './pages/ManagerScanner';
+import ManagerMap from './pages/ManagerMap';
+import ManagementIssuesList from './pages/ManagementIssueList';
 import FAQ from './pages/FAQ';
+import StudentHistory from './pages/StudentHistory';
 
 function RootRedirect() {
   const { user } = useAuth();
@@ -32,18 +35,21 @@ export default function App() {
             <Route path="/register" element={<Register />} />
 
             {/* Student routes */}
-            <Route path="/home" element={<ProtectedRoute allowedRoles={['student']}><Home /></ProtectedRoute>} />
-            <Route path="/map" element={<ProtectedRoute allowedRoles={['student']}><SeatMap /></ProtectedRoute>} />
+            <Route path="/home"         element={<ProtectedRoute allowedRoles={['student']}><Home /></ProtectedRoute>} />
+            <Route path="/map"          element={<ProtectedRoute allowedRoles={['student']}><SeatMap /></ProtectedRoute>} />
             <Route path="/reservations" element={<ProtectedRoute allowedRoles={['student']}><MyReservations /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute allowedRoles={['student', 'manager']}><Profile /></ProtectedRoute>} />
-            <Route path="/feedback" element={<ProtectedRoute allowedRoles={['student', 'manager']}><Feedback /></ProtectedRoute>} />
-            <Route path="/faq" element={<FAQ />} />
+            <Route path="/profile"      element={<ProtectedRoute allowedRoles={['student', 'manager']}><Profile /></ProtectedRoute>} />
+            <Route path="/feedback"     element={<ProtectedRoute allowedRoles={['student', 'manager']}><Feedback /></ProtectedRoute>} />
+            <Route path="/faq"     element={<ProtectedRoute allowedRoles={['student', 'manager']}><FAQ /></ProtectedRoute>} />
 
             {/* Manager routes */}
-            <Route path="/manager" element={<ProtectedRoute allowedRoles={['manager']}><ManagerDashboard /></ProtectedRoute>} />
+            <Route path="/manager"          element={<ProtectedRoute allowedRoles={['manager']}><ManagerDashboard /></ProtectedRoute>} />
+            <Route path="/manager/map"      element={<ProtectedRoute allowedRoles={['manager']}><ManagerMap /></ProtectedRoute>} />
             <Route path="/manager/students" element={<ProtectedRoute allowedRoles={['manager']}><ManagerStudents /></ProtectedRoute>} />
-            <Route path="/manager/report" element={<ProtectedRoute allowedRoles={['manager']}><ManagerReport /></ProtectedRoute>} />
-            <Route path="/manager/scan" element={<ProtectedRoute allowedRoles={['manager']}><ManagerScanner /></ProtectedRoute>} />
+            <Route path="/manager/report"   element={<ProtectedRoute allowedRoles={['manager']}><ManagerReport /></ProtectedRoute>} />
+            <Route path="/manager/scan"     element={<ProtectedRoute allowedRoles={['manager']}><ManagerScanner /></ProtectedRoute>} />
+            <Route path="/manager/feedback/management-issues"     element={<ProtectedRoute allowedRoles={['manager']}><ManagementIssuesList /></ProtectedRoute>} />
+            <Route path="/manager/students/:userId/history" element={<StudentHistory />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

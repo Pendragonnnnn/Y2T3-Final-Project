@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import BottomNav from '../components/BottomNav';
 
@@ -6,6 +7,7 @@ export default function ManagerStudents() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get('/manager/students').then(({ data }) => setStudents(data.students)).finally(() => setLoading(false));
@@ -31,23 +33,17 @@ export default function ManagerStudents() {
       ) : (
         <div className="stack">
           {filtered.map((s) => (
-            <div key={s.user_id} className="card flex-between">
+            <div
+              key={s.user_id}
+              className="card flex-between"
+              onClick={() => navigate(`/manager/students/${s.user_id}/history`, { state: { student: s } })}
+              style={{ cursor: 'pointer' }}
+            >
               <div>
                 <p style={{ fontWeight: 600 }}>{s.full_name}</p>
                 <p className="text-muted">{s.email}</p>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <p
-                  style={{
-                    fontWeight: 700,
-                    color: s.current_penalty_score === 0 ? 'var(--color-success)'
-                      : s.current_penalty_score < 30 ? 'var(--color-warning)' : 'var(--color-danger)',
-                  }}
-                >
-                  {s.current_penalty_score}
-                </p>
-                <p className="text-muted" style={{ fontSize: 11 }}>penalty pts</p>
-              </div>
+              
             </div>
           ))}
           {filtered.length === 0 && <p className="text-muted text-center mt-16">No students found</p>}

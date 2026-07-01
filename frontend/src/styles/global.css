@@ -146,6 +146,7 @@ a { text-decoration: none; color: inherit; }
 .screen-title {
   font-size: 18px;
   font-weight: 600;
+  margin-bottom: 20px;
 }
 .welcome-card {
   width: 300px;
@@ -402,8 +403,8 @@ a { text-decoration: none; color: inherit; }
   font-weight: 600;
 }
 
-.badge-available { background: #E8F8EE; color: #1e8e4fa8; }
-.badge-occupied { background: #FDECEA; color: #C0392B; }
+.badge-available { background: #E8F8EE; color: #539546; }
+.badge-occupied { background: #FDECEA; color: #a90505; }
 .badge-blocked { background: #F0F1F4; color: #6B7693; }
 .badge-pending { background: #FFF4E0; color: #B8770A; }
 .badge-accepted { background: #539546; color: #ffffff; }
@@ -454,8 +455,8 @@ a { text-decoration: none; color: inherit; }
   transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out; 
 }
 .seat-cell:active { transform: scale(0.95); }
-.seat-cell.available { background: #E8F8EE; color: #1E8E4F; }
-.seat-cell.occupied { background: #FDECEA; color: #C0392B; cursor: not-allowed; }
+.seat-cell.available { background: #E8F8EE; color: #539546; }
+.seat-cell.occupied { background: #FDECEA; color: #a90505; cursor: not-allowed; }
 .seat-cell.blocked { background: #F0F1F4; color: #6B7693; cursor: not-allowed; }
 .seat-cell.selected { border-color: var(--color-primary); background: var(--color-primary); color: white; }
 
@@ -588,13 +589,13 @@ a { text-decoration: none; color: inherit; }
 
 .interactive-seat.available {
   background: #E8F8EE;
-  color: #1E8E4F;
+  color: #539546;
   border-color: rgba(30, 142, 79, 0.35);
 }
 
 .interactive-seat.occupied {
   background: #FDECEA;
-  color: #C0392B;
+  color: #a90505;
   cursor: not-allowed;
   border-color: rgba(192, 57, 43, 0.35);
 }

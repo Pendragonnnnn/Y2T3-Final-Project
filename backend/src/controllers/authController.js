@@ -107,3 +107,15 @@ exports.changePassword = async (req, res) => {
     res.status(500).json({ error: 'Failed to update password' });
   }
 };
+
+exports.updateName = async (req, res) => {
+  try {
+    const { fullName } = req.body;
+    if (!fullName?.trim()) return res.status(400).json({ error: 'Name is required.' });
+    await db.query('UPDATE User SET full_name = ? WHERE user_id = ?', [fullName.trim(), req.user.userId]);
+    res.json({ message: 'Name updated' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update name.' });
+  }
+};

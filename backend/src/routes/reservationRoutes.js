@@ -19,6 +19,7 @@ router.post('/scan-checkout', authenticate, requireRole('manager'), reservationC
 router.get('/active-and-pending', authenticate, requireRole('manager'), reservationController.listActiveAndPending);
 router.get('/pending',        authenticate, requireRole('manager'), reservationController.listPending);
 router.get('/all',            authenticate, requireRole('manager'), reservationController.listAll);
+router.get('/manager/student/:userId/history', authenticate, requireRole('manager'), reservationController.studentHistory);
 router.patch('/:reservationId/checkin',          authenticate, requireRole('manager'), reservationController.checkInReservation);
 router.patch('/:reservationId/accept',           authenticate, requireRole('manager'), reservationController.acceptReservation);
 router.patch('/:reservationId/reject',           authenticate, requireRole('manager'), reservationController.rejectReservation);

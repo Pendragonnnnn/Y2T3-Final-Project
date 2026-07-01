@@ -159,6 +159,68 @@ class Reservation {
     );
     return rows;
   }
+
+  // Last N reservations for a user regardless of outcome (used by the manager's
+  // per-student history view). Includes rows where the student never checked in
+  // (check_in_time IS NULL) so no-shows are visible too. Duration is only
+  // computed when both check_in_time and end_time are present — otherwise the
+  // student either never checked in or the session is still ongoing.
+  static async recentByUser(userId, limit = 10) {
+    await expireStaleReservations();
+    const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : 10;
+    const [rows] = await db.query(
+      `SELECT r.*, t.table_label,
+              CASE
+                WHEN r.check_in_time IS NOT NULL AND r.end_time IS NOT NULL
+                  THEN TIMESTAMPDIFF(MINUTE, r.check_in_time, r.end_time)
+                ELSE NULL
+              END AS duration_minutes
+       FROM Reservation_Record r
+       JOIN Seat s ON s.seat_id = r.seat_id
+       JOIN Library_Table t ON t.table_id = s.table_id
+       WHERE r.user_id = ?
+       ORDER BY r.reservation_date DESC
+       LIMIT ${safeLimit}`,
+      [userId]
+    );
+    return rows;
+  }
+
+  static async getPeriodicStats() {
+  const [today] = await db.query(
+    `SELECT COUNT(*) as count FROM Reservation_Record WHERE DATE(reservation_date) = CURDATE()`
+  );
+  const [week] = await db.query(
+    `SELECT COUNT(*) as count FROM Reservation_Record WHERE YEARWEEK(reservation_date, 1) = YEARWEEK(CURDATE(), 1)`
+  );
+  const [month] = await db.query(
+    `SELECT COUNT(*) as count FROM Reservation_Record WHERE MONTH(reservation_date) = MONTH(CURDATE()) AND YEAR(reservation_date) = YEAR(CURDATE())`
+  );
+
+  return {
+    today: today[0]?.count,
+    week: week[0]?.count,
+    month: month[0]?.count
+  };
 }
+
+// Add this inside your Reservation class in Reservation.js
+static async getPeakHours() {
+  const [rows] = await db.query(
+    `SELECT 
+        HOUR(start_time) AS hour,  -- Use start_time here instead of reservation_date
+        COUNT(*) AS count
+     FROM Reservation_Record
+     WHERE start_time >= NOW() - INTERVAL 30 DAY
+     GROUP BY HOUR(start_time)
+     ORDER BY count DESC 
+     LIMIT 5`
+  );
+  return rows;
+}
+
+}
+
+
 
 module.exports = Reservation;

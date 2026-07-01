@@ -10,6 +10,16 @@ exports.getMap = async (req, res) => {
   }
 };
 
+exports.getManagerMap = async (req, res) => {
+  try {
+    const seats = await Seat.getManagerMap();
+    res.json({ seats });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch manager seat map' });
+  }
+};
+
 exports.getStats = async (req, res) => {
   try {
     const stats = await Seat.getStats();
@@ -25,7 +35,6 @@ exports.blockSeat = async (req, res) => {
     const { seatId } = req.params;
     const seat = await Seat.findById(seatId);
     if (!seat) return res.status(404).json({ error: 'Seat not found' });
-
     await Seat.updateStatus(seatId, 'blocked');
     res.json({ message: 'Seat blocked' });
   } catch (err) {
@@ -39,7 +48,6 @@ exports.openSeat = async (req, res) => {
     const { seatId } = req.params;
     const seat = await Seat.findById(seatId);
     if (!seat) return res.status(404).json({ error: 'Seat not found' });
-
     await Seat.updateStatus(seatId, 'available');
     res.json({ message: 'Seat opened' });
   } catch (err) {

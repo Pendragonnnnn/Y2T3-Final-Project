@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '../components/BottomNav';
+import { useAuth } from '../context/AuthContext';
 
-const FAQ_DATA = [
+const STUDENT_FAQ_DATA = [
   {
     category: 'Reservations',
     icon: '',
@@ -99,15 +100,65 @@ const FAQ_DATA = [
   },
 ];
 
+const MANAGER_FAQ_DATA = [
+  {
+    category: 'Dashboard & Reservations',
+    icon: '',
+    items: [
+      {
+        q: 'How do I manage active or pending reservations?',
+        a: 'From the Manager Dashboard, you can view all active and pending reservations. For pending reservations, you have the option to manually reject them using the red "Reject" button.',
+      },
+      {
+        q: 'How do I scan a student\'s QR code?',
+        a: 'Tap "Scan QR" from the dashboard to access the Scanner Station. Keep the input field focused and point the USB scanner at the student\'s code. It handles both check-ins and check-outs automatically.',
+      }
+    ]
+  },
+  {
+    category: 'Seat Management',
+    icon: '',
+    items: [
+      {
+        q: 'How do I block or open a seat?',
+        a: 'Navigate to the Seat Map in Control mode. Tap any seat to pull up the action menu at the bottom of the screen, then toggle "Block seat" or "Open seat". Blocked seats immediately become unavailable for student booking.',
+      }
+    ]
+  },
+  {
+    category: 'Reports & Students',
+    icon: '',
+    items: [
+      {
+        q: 'Where can I see library usage trends?',
+        a: 'The Analytics Report displays current seat occupancy, daily/weekly/monthly reservation totals, and a visual breakdown of peak booking hours over the last 30 days.',
+      },
+      {
+        q: 'How do I view user feedback and issues?',
+        a: 'User feedback is tracked in the Analytics Report, or you can view specific management issues by clicking "View feedback" to see detailed star ratings and comments left by users.',
+      },
+      {
+        q: 'How do I look up a specific student?',
+        a: 'Go to the All Students screen. Use the search bar to look them up by name or email, then tap their profile to view their complete history.',
+      }
+    ]
+  }
+];
+
 export default function FAQ() {
   const navigate = useNavigate();
+  const { user } = useAuth(); // Pull in the current user to check their role
   const [openKey, setOpenKey] = useState(null); // "catIdx-itemIdx"
 
   const toggle = (key) => setOpenKey((prev) => (prev === key ? null : key));
 
+  // Swap the displayed FAQ data based on the user's role
+  const isManager = user?.role === 'manager'; // Adjust 'manager' to match your exact role string if different
+  const activeData = isManager ? MANAGER_FAQ_DATA : STUDENT_FAQ_DATA;
+
   return (
     <div className="screen">
-      <div className="faq-screen-header">
+      <div className="faq-screen-header"> 
         <button
           onClick={() => navigate(-1)}
           style={{
@@ -126,16 +177,12 @@ export default function FAQ() {
           く
         </button>
 
-        <h2 className="screen-title">FAQs</h2>
+        <h2 className="screen-title">{isManager ? 'Manager FAQs' : 'FAQs'}</h2>
 
         <div style={{ width: 22 }} />
-
       </div>
 
-
-      
-
-      {FAQ_DATA.map((section, catIdx) => (
+      {activeData.map((section, catIdx) => (
         <div key={catIdx} style={{ marginBottom: 20 }}>
           {/* Category header */}
           <div className="flex-row" style={{ marginBottom: 10, gap: 8 }}>
@@ -223,7 +270,9 @@ export default function FAQ() {
       >
         <p style={{ fontWeight: 600, color: 'white', marginBottom: 4 }}>Still need help?</p>
         <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)' }}>
-          Speak to a library manager at the front desk or leave feedback after your next visit.
+          {isManager 
+            ? 'Contact the system administrator for technical support.'
+            : 'Speak to a library manager at the front desk or leave feedback after your next visit.'}
         </p>
       </div>
 

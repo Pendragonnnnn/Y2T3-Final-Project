@@ -164,6 +164,21 @@ exports.listAll = async (req, res) => {
   }
 };
 
+// ── Manager: recent reservation history for a single student ──────
+// Returns the last 10 reservations for the given user, whether or not
+// they ever checked in. Used by ManagerStudents.jsx when a manager
+// clicks into a student to see their history and how long each visit lasted.
+exports.studentHistory = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const history = await Reservation.recentByUser(userId, 10);
+    res.json({ history });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch student history' });
+  }
+};
+
 // ── Manager: accept reservation ───────────────────────────────────
 exports.acceptReservation = async (req, res) => {
   try {

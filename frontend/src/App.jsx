@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -25,6 +26,15 @@ function RootRedirect() {
 }
 
 export default function App() {
+  useEffect(() => {
+    const stored = localStorage.getItem('sl_dark_mode');
+    if (stored !== null) {
+      document.documentElement.setAttribute('data-theme', stored === 'true' ? 'dark' : 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+  }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter>

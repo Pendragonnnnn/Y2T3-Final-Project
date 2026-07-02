@@ -69,7 +69,7 @@ export default function SeatMap() {
       )}
     
       {selected && (
-      <div className="card mt-16" style={{ position: 'sticky', bottom: 10, paddingLeft: '0px' ,paddingTop: '6px', display: 'flex', flexDirection: 'row', gap: '10px'}}>
+      <div className="card mt-16" style={{ position: 'sticky', bottom: 2, paddingLeft: '0px' ,paddingTop: '6px', display: 'flex', flexDirection: 'row', gap: '10px'}}>
         {/* Close Button */}
         <p style={{ fontWeight: '200' }}></p>
         <Button 

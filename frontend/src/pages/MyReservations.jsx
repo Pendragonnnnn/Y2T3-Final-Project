@@ -121,7 +121,7 @@ export default function MyReservations() {
 
                 {/* ── QR section ── */}
                 {qrValue && (
-                  <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                  <div style={{ marginTop: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
 
                     {/* Context bannesr */}
                     <div style={{

@@ -36,14 +36,16 @@ export default function ManagerStudents() {
             <div
               key={s.user_id}
               className="card flex-between"
-              onClick={() => navigate(`/manager/students/${s.user_id}/history`, { state: { student: s } })}
-              style={{ cursor: 'pointer' }}
+              
             >
               <div>
-                <p style={{ fontWeight: 600 }}>{s.full_name}</p>
-                <p className="text-muted">{s.email}</p>
+                <p style={{ fontWeight: 600, color: '#0B56A4' }}>{s.full_name}</p>
+                <p className="text-muted" style={{ color: '#9b9b9b' }}>{s.email}</p>
               </div>
-              
+              <div 
+              onClick={() => navigate(`/manager/students/${s.user_id}/history`, { state: { student: s } })}
+              style={{ cursor: 'pointer', fontSize: '24px', color: '#0B56A4'  }}
+              >➝</div>
             </div>
           ))}
           {filtered.length === 0 && <p className="text-muted text-center mt-16">No students found</p>}

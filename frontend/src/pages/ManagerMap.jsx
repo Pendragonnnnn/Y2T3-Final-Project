@@ -46,8 +46,7 @@ export default function ManagerMap() {
     <div className="screen">
       <div className="screen-header">
         <div>
-          <p className="text-muted">Control mode</p>
-          <h2 className="screen-title">Seat Map</h2>
+          <h2 className="screen-title">Seat Management</h2>
         </div>
       </div>
 
@@ -65,16 +64,16 @@ export default function ManagerMap() {
       {/* ── Bottom sheet: open/block toggle ── */}
       {console.log('render — selected is:', selected)}
       {selected && (
-        <div className="card mt-16" style={{ position: 'sticky', bottom: 10, paddingLeft: '16px' ,paddingTop: '16px', display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'flex-start'}}>
+        <div className="card mt-16" style={{ position: 'sticky', bottom: -20, paddingLeft: '16px' ,paddingTop: '16px', display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'flex-start'}}>
 
           <button
             onClick={handleToggle}
             disabled={busy}
             style={{
               width: '100%', padding: '12px 0', borderRadius: 8,
-              background: selected.current_status === 'blocked' ? 'rgba(34,197,94,0.1)' : 'rgba(100,116,139,0.15)',
-              border: `1px solid ${selected.current_status === 'blocked' ? '#22c55e40' : '#334155'}`,
-              color: selected.current_status === 'blocked' ? '#22c55e' : '#94a3b8',
+              background: selected.current_status === 'blocked' ? '#53954621' : '#a90505',
+              
+              color: selected.current_status === 'blocked' ? '#539546' : '#ffffff',
               fontSize: 13, fontWeight: 600, cursor: busy ? 'not-allowed' : 'pointer',
               opacity: busy ? 0.6 : 1,
             }}

@@ -186,7 +186,7 @@ export default function InteractiveSeatMap({
 
       {/* ── Legend strip ── */}
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'space-between' }}>
-        <p style={{ fontSize: 11, color: isManager ? '#475569' : 'var(--color-text-tertiary)' }}>
+        <p style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>
           {isManager ? 'Tap a seat to manage it' : 'Drag to pan · scroll to zoom'}
         </p>
       </div>
@@ -196,10 +196,10 @@ export default function InteractiveSeatMap({
         ref={containerRef}
         style={{
           position: 'relative', width: '100%', height: 520,
-          overflow: 'hidden', borderRadius: isManager ? 16 : 20,
-          background: isManager ? '#0f172a' : '#3d4a5c',
-          border: isManager ? '1.5px solid #1e293b' : '1.5px solid #5a6a80',
-          boxShadow: isManager ? '0 8px 32px rgba(0,0,0,0.4)' : '0 12px 40px rgba(0,0,0,0.18)',
+          overflow: 'hidden', borderRadius: 20,
+          background: '#3d4a5c',
+          border:  '1.5px solid #5a6a80',
+          boxShadow:'0 12px 40px rgba(0,0,0,0.18)',
           cursor: panning ? 'grabbing' : 'grab',
           touchAction: 'none',
         }}
@@ -217,19 +217,19 @@ export default function InteractiveSeatMap({
           {/* Floor */}
           <div style={{
             position: 'absolute', inset: 20, borderRadius: 24,
-            background: isManager ? '#1a2332' : '#4a5568',
-            border: isManager ? '1px solid #243044' : '1px solid #607080',
-            boxShadow: isManager ? 'none' : 'inset 0 0 60px rgba(0,0,0,0.25)',
+            background: '#4a5568',
+            border: '1px solid #607080',
+            boxShadow: 'inset 0 0 60px rgba(0,0,0,0.25)',
           }} />
 
           {/* Grid lines */}
-          <svg style={{ position: 'absolute', inset: 20, pointerEvents: 'none', opacity: isManager ? 0.06 : 0.08 }}
+          <svg style={{ position: 'absolute', inset: 20, pointerEvents: 'none', opacity:  0.08 }}
             width={SCENE_WIDTH - 40} height={SCENE_HEIGHT - 40}>
             {Array.from({ length: 30 }, (_, i) => (
-              <line key={`v${i}`} x1={i * 60} y1={0} x2={i * 60} y2={SCENE_HEIGHT} stroke={isManager ? '#94a3b8' : '#fff'} strokeWidth={1} />
+              <line key={`v${i}`} x1={i * 60} y1={0} x2={i * 60} y2={SCENE_HEIGHT} stroke={'#fff'} strokeWidth={1} />
             ))}
             {Array.from({ length: 22 }, (_, i) => (
-              <line key={`h${i}`} x1={0} y1={i * 60} x2={SCENE_WIDTH} y2={i * 60} stroke={isManager ? '#94a3b8' : '#fff'} strokeWidth={1} />
+              <line key={`h${i}`} x1={0} y1={i * 60} x2={SCENE_WIDTH} y2={i * 60} stroke={'#fff'} strokeWidth={1} />
             ))}
           </svg>
 
@@ -238,11 +238,9 @@ export default function InteractiveSeatMap({
             <div key={o.id} style={{
               position: 'absolute', left: o.x, top: o.y, width: o.width, height: o.height,
               transform: `rotate(${o.rotation}deg)`,
-              background: isManager
-                ? 'rgba(30,41,59,0.8)'
-                : 'linear-gradient(135deg, rgba(180,210,254,0.12) 0%, rgba(116,158,220,0.08) 100%)',
-              border: isManager ? '1px solid #334155' : '1.5px solid rgba(115,159,206,0.3)',
-              boxShadow: isManager ? 'none' : 'inset 3px 0 6px rgba(104,104,104,0.15)',
+              background: 'linear-gradient(135deg, rgba(180,210,254,0.12) 0%, rgba(116,158,220,0.08) 100%)',
+              border: '1.5px solid rgba(115,159,206,0.3)',
+              boxShadow:  'inset 3px 0 6px rgba(104,104,104,0.15)',
               borderRadius: o.shape === 'semi-circle' ? `${o.width / 2}px ${o.width / 2}px 0 0` : 6,
               pointerEvents: 'none',
             }} />
@@ -260,12 +258,10 @@ export default function InteractiveSeatMap({
                 {/* Table surface */}
                 <div style={{
                   position: 'absolute', inset: 34,
-                  background: isManager ? '#243044' : 'linear-gradient(145deg, #8fa3ba, #7a8fa5)',
-                  borderRadius: isManager ? 4 : 6,
-                  border: isManager ? '1px solid #2d3f58' : '1px solid rgba(255,255,255,0.1)',
-                  boxShadow: isManager
-                    ? 'inset 0 1px 4px rgba(0,0,0,0.5)'
-                    : 'inset 0 2px 8px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)',
+                  background:'linear-gradient(145deg, #8fa3ba, #7a8fa5)',
+                  borderRadius: 6,
+                  border:  '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)',
                 }} />
 
                 {/* Seats */}
@@ -289,25 +285,23 @@ export default function InteractiveSeatMap({
                         borderRadius: '50%',
                         transform: `rotate(${-rotation}deg)`,
                         background: isSelected
-                          ? (isManager ? 'rgba(99,102,241,0.35)' : 'var(--color-primary)')
+                          ? ('var(--color-primary)')
                           : cfg.bg,
-                        border: `2px solid ${isSelected ? (isManager ? '#818cf8' : 'var(--color-primary)') : cfg.border}`,
-                        color: isSelected ? (isManager ? '#c7d2fe' : '#fff') : cfg.color,
+                        border: `2px solid ${isSelected ? ('var(--color-primary)') : cfg.border}`,
+                        color: isSelected ? ('#fff') : cfg.color,
                         fontSize: hasOccupant ? 9 : 10,
                         fontWeight: 700,
                         cursor: canTap ? 'pointer' : 'not-allowed',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         boxShadow: isSelected
-                          ? (isManager
-                              ? '0 0 0 3px rgba(99,102,241,0.3), 0 4px 12px rgba(0,0,0,0.4)'
-                              : '0 0 0 3px rgba(11,86,164,0.35), 0 4px 12px rgba(11,86,164,0.4)')
-                          : (isManager ? `0 0 8px ${cfg.border}22, 0 2px 6px rgba(0,0,0,0.3)` : '0 3px 8px rgba(0,0,0,0.25)'),
+                          ? ('0 0 0 3px rgba(11,86,164,0.35), 0 4px 12px rgba(11,86,164,0.4)')
+                          : ('0 3px 8px rgba(0,0,0,0.25)'),
                         transition: 'all 0.15s ease',
                         opacity: !isManager && seat.current_status === 'blocked' ? 0.6 : 1,
                       }}
                       title={`${(seat.current_status).toUpperCase()}`}
                     >
-                      {isManager ? seat.seat_id: ""}
+                      {isManager ? seat.seat_id : "【　】"}
                     </button>
                   );
                 })}

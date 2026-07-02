@@ -72,7 +72,7 @@ export default function Feedback() {
             padding: 0,
             lineHeight: 1,
             alignSelf: 'flex-start',
-            color: '#0B56A4',
+            color: 'var(--color-primary)',
           }}
           aria-label="Go back"
         >

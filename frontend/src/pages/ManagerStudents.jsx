@@ -39,12 +39,12 @@ export default function ManagerStudents() {
               
             >
               <div>
-                <p style={{ fontWeight: 600, color: '#0B56A4' }}>{s.full_name}</p>
+                <p style={{ fontWeight: 600, color: 'var(--color-primary)' }}>{s.full_name}</p>
                 <p className="text-muted" style={{ color: '#9b9b9b' }}>{s.email}</p>
               </div>
               <div 
               onClick={() => navigate(`/manager/students/${s.user_id}/history`, { state: { student: s } })}
-              style={{ cursor: 'pointer', fontSize: '24px', color: '#0B56A4'  }}
+              style={{ cursor: 'pointer', fontSize: '24px', color: 'var(--color-primary)'  }}
               >➝</div>
             </div>
           ))}

@@ -100,7 +100,7 @@ export default function MyReservations() {
         </div>
       ) : reservations.length === 0 ? (
         <div className="empty-state">
-          <p style={{ fontSize: 50, color: '#0B56A4' }}>✉</p>
+          <p style={{ fontSize: 50, color: 'var(--color-primary)' }}>✉</p>
           <p style={{ fontWeight: 600, marginTop: 8 }}>No active reservation</p>
           <p className="text-muted">Reserve a seat from the library map</p>
         </div>
@@ -114,14 +114,14 @@ export default function MyReservations() {
             const qrValue   = isPending ? getCheckInQr(r) : isActive ? getCheckOutQr(r) : null;
 
             return (
-              <div key={r.reservation_id} className="card">
+              <div key={r.reservation_id} className="card" style={{ background: 'var(--qr-code-bg)' }}>
 
                 {/* ── Top row ── */}
                 
 
                 {/* ── QR section ── */}
                 {qrValue && (
-                  <div style={{ marginTop: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                  <div style={{ marginTop: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12  }}>
 
                     {/* Context bannesr */}
                     <div style={{

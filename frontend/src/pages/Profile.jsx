@@ -81,6 +81,7 @@ export default function Profile() {
   };
 
   const displayName = user?.fullName || profile?.full_name || '';
+  const accentColor = darkMode ? '#3f9b0b' : '#0B56A4';
 
   return (
     <div className="screen">
@@ -143,11 +144,11 @@ export default function Profile() {
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 4, paddingLeft: '24px' }}>
-            <p style={{ fontWeight: 500, fontSize: 22, color: '#0B56A4' }}>{displayName}</p>
+            <p style={{ fontWeight: 500, fontSize: 22, color: accentColor }}>{displayName}</p>
             <button
               onClick={handleEditName}
               title="Edit name"
-              style={{ color: '#0B56A4', fontSize: 20, lineHeight: 1, padding: 2 }}
+              style={{ color: accentColor, fontSize: 20, lineHeight: 1, padding: 2 }}
             >
               ✎
             </button>
@@ -163,7 +164,7 @@ export default function Profile() {
           <div className="flex-between" style={{ cursor: 'pointer' }}
             onClick={() => { setShowPasswordForm(v => !v); setPasswordError(''); setPasswordSuccess(''); setPasswordForm({ current: '', next: '' }); }}>
             <div className="flex-row" style={{ gap: 10 }}>
-              <span style={{ fontSize: 20, marginRight: '4px', color: '#0B56A4' }}>🔒︎</span>
+              <span style={{ fontSize: 20, marginRight: '4px', color: accentColor }}>🔒︎</span>
               <p style={{ fontWeight: 600 }}>Change password</p>
             </div>
             <span style={{ fontSize: 18, color: 'var(--color-text-secondary)', transform: showPasswordForm ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease', display: 'inline-block' }}>›</span>
@@ -192,7 +193,7 @@ export default function Profile() {
         <div style={{ cursor: 'pointer', padding: '0px 0 8px 0' }} onClick={() => navigate('/faq')}>
           <div className="flex-between">
             <div className="flex-row" style={{ gap: 10 }}>
-              <span style={{ fontSize: 20, marginRight: '4px', color: '#0B56A4' }}>ⓘ</span>
+              <span style={{ fontSize: 20, marginRight: '4px', color: accentColor }}>ⓘ</span>
               <p style={{ fontWeight: 600 }}>FAQs</p>
             </div>
             <span style={{ fontSize: 18, color: 'var(--color-text-secondary)' }}>›</span>
@@ -205,7 +206,7 @@ export default function Profile() {
         <div>
           <div className="flex-between" style={{ alignItems: 'center' }}>
             <div className="flex-row" style={{ gap: 10, padding: '0px 0 8px 0' }}>
-              <span style={{ fontSize: 20, marginRight: '4px', color: '#0B56A4' }}>{darkMode ? '⏾' : '☼'}</span>
+              <span style={{ fontSize: 20, marginRight: '4px', color: accentColor }}>{darkMode ? '⏾' : '☼'}</span>
               <p style={{ fontWeight: 600 }}>Dark mode</p>
             </div>
             <div onClick={() => setDarkMode(v => !v)} style={{ width: 48, height: 28, borderRadius: 999, background: darkMode ? 'var(--color-primary)' : 'var(--color-border)', position: 'relative', cursor: 'pointer', transition: 'background 0.2s ease', flexShrink: 0 }}>
@@ -220,7 +221,7 @@ export default function Profile() {
         <div style={{ cursor: 'pointer', padding: '0px 0 8px 0' }} onClick={() => navigate('/feedback')}>
           <div className="flex-between">
             <div className="flex-row" style={{ gap: 10 }}>
-              <span style={{ fontSize: 20, marginRight: '4px', color: '#0B56A4' }}>🗨</span>
+              <span style={{ fontSize: 20, marginRight: '4px', color: accentColor }}>🗨</span>
               <p style={{ fontWeight: 600 }}>Feedback</p>
             </div>
             <span style={{ fontSize: 18, color: 'var(--color-text-secondary)' }}>›</span>

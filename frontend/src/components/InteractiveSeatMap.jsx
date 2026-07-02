@@ -197,7 +197,7 @@ export default function InteractiveSeatMap({
         style={{
           position: 'relative', width: '100%', height: 520,
           overflow: 'hidden', borderRadius: 20,
-          background: '#3d4a5c',
+          background: 'var(--map-bg)',
           border:  '1.5px solid #5a6a80',
           boxShadow:'0 12px 40px rgba(0,0,0,0.18)',
           cursor: panning ? 'grabbing' : 'grab',
@@ -217,7 +217,7 @@ export default function InteractiveSeatMap({
           {/* Floor */}
           <div style={{
             position: 'absolute', inset: 20, borderRadius: 24,
-            background: '#4a5568',
+            background: 'var(--map-surface)',
             border: '1px solid #607080',
             boxShadow: 'inset 0 0 60px rgba(0,0,0,0.25)',
           }} />
@@ -226,10 +226,10 @@ export default function InteractiveSeatMap({
           <svg style={{ position: 'absolute', inset: 20, pointerEvents: 'none', opacity:  0.08 }}
             width={SCENE_WIDTH - 40} height={SCENE_HEIGHT - 40}>
             {Array.from({ length: 30 }, (_, i) => (
-              <line key={`v${i}`} x1={i * 60} y1={0} x2={i * 60} y2={SCENE_HEIGHT} stroke={'#fff'} strokeWidth={1} />
+              <line key={`v${i}`} x1={i * 60} y1={0} x2={i * 60} y2={SCENE_HEIGHT} stroke={'var(--map-line)'} strokeWidth={1} />
             ))}
             {Array.from({ length: 22 }, (_, i) => (
-              <line key={`h${i}`} x1={0} y1={i * 60} x2={SCENE_WIDTH} y2={i * 60} stroke={'#fff'} strokeWidth={1} />
+              <line key={`h${i}`} x1={0} y1={i * 60} x2={SCENE_WIDTH} y2={i * 60} stroke={'var(--map-line)'} strokeWidth={1} />
             ))}
           </svg>
 
@@ -258,7 +258,7 @@ export default function InteractiveSeatMap({
                 {/* Table surface */}
                 <div style={{
                   position: 'absolute', inset: 34,
-                  background:'linear-gradient(145deg, #8fa3ba, #7a8fa5)',
+                  background:'var(--table-surface)',
                   borderRadius: 6,
                   border:  '1px solid rgba(255,255,255,0.1)',
                   boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)',

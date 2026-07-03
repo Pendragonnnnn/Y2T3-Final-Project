@@ -39,9 +39,9 @@
 
 html[data-theme="dark"] {
   color-scheme: dark;
-  --color-primary: #3f9b0b;
-  --color-primary-dark: #2f7609;
-  --color-primary-light: #6bc24a;
+  --color-primary: #1E3F9E;
+  --color-primary-dark: #1E3F9E;
+  --color-primary-light: #1E3F9E;
   --color-bg: #0F172A;
   --color-surface: #0F172A;
   --card-surface: #182442;
@@ -134,7 +134,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .logout-button:hover {
-  color: rgb(0, 0, 0);
+  color: var(--color-text-primary);
 }
 
 @media (min-width: 600px) {
@@ -322,6 +322,10 @@ a { text-decoration: none; color: inherit; }
 .field select:focus,
 .field textarea:focus {
   border-color: var(--color-primary);
+}
+
+html[data-theme="dark"] input {
+  color: #1A2238;
 }
 
 /* ── Badges / pills ── */
@@ -594,14 +598,19 @@ a { text-decoration: none; color: inherit; }
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--color-text-primary);
-  color: white;
+  background: #1A2238;
+  color: #FFFFFF;
   padding: 12px 20px;
   border-radius: var(--radius-pill);
   font-size: 13px;
   z-index: 1000;
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
   max-width: 90%;
+}
+
+html[data-theme="dark"] .toast {
+  background: #1A2238;
+  color: #FFFFFF;
 }
 
 .show_seat {
@@ -731,7 +740,7 @@ a { text-decoration: none; color: inherit; }
 
 .helo {
   font-size: 14px;
-  color: black;
+  color: var(--color-text-primary);
   margin-left: 4px;
 }
 

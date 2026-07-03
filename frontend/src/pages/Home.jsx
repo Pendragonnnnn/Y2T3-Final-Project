@@ -78,17 +78,17 @@ export default function Home() {
           <div className="flex-row" style={{ gap: 16, marginTop: 8 }}>
             <div className='show_seat'>
               <p style={{ color: 'blue', fontSize: 28, fontWeight: 700 }}>{stats?.available ?? 0}</p>
-              <p style={{ color: 'black', fontSize: 11 }}>Available</p>
+              <p style={{ color: 'var(--color-text-primary)', fontSize: 11 }}>Available</p>
             </div >
 
             <div className='show_seat'>
               <p style={{ color: 'red', fontSize: 28, fontWeight: 700 }}>{stats?.occupied ?? 0}</p>
-              <p style={{ color: 'black', fontSize: 11 }}>Occupied</p>
+              <p style={{ color: 'var(--color-text-primary)', fontSize: 11 }}>Occupied</p>
             </div>
 
             <div className='show_seat'>
               <p style={{ color: 'rgb(31, 146, 35)', fontSize: 28, fontWeight: 700 }}>{stats?.total ?? 0}</p>
-              <p style={{ color: 'black', fontSize: 11 }}>Total</p>
+              <p style={{ color: 'var(--color-text-primary)', fontSize: 11 }}>Total</p>
             </div>
           </div>
         )}

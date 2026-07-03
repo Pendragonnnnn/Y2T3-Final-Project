@@ -167,7 +167,7 @@ export default function ManagerScanner() {
               border: `2px solid ${loading ? 'var(--color-warning)' : 'var(--color-border)'}`,
               borderRadius: 'var(--radius-sm)',
               background: loading ? '#FFFBF2' : '#FAFBFD',
-              color: 'var(--color-text-primary)',
+              color: '#1A2238',
               outline: 'none',
               transition: 'border-color 0.2s ease',
             }}

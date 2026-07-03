@@ -88,7 +88,7 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
             style={{
-              background: 'white',
+              background: 'rgba(255, 255, 255, 0.12)',
               border: '1.5px solid rgba(255,255,255,0.25)',
               color: 'silver',
               width: '100%',

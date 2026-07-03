@@ -39,9 +39,9 @@
 
 html[data-theme="dark"] {
   color-scheme: dark;
-  --color-primary: #3f9b0b;
-  --color-primary-dark: #2f7609;
-  --color-primary-light: #6bc24a;
+  --color-primary: #1E3F9E;
+  --color-primary-dark: #1E3F9E;
+  --color-primary-light: #1E3F9E;
   --color-bg: #0F172A;
   --color-surface: #0F172A;
   --card-surface: #182442;
@@ -134,7 +134,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .logout-button:hover {
-  color: rgb(0, 0, 0);
+  color: var(--color-text-primary);
 }
 
 @media (min-width: 600px) {
@@ -196,7 +196,7 @@ a { text-decoration: none; color: inherit; }
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: var(--color-surface);
+  background: #c4d2ec;
   color: var(--color-primary);
   display: flex;
   justify-content: center;
@@ -322,6 +322,10 @@ a { text-decoration: none; color: inherit; }
 .field select:focus,
 .field textarea:focus {
   border-color: var(--color-primary);
+}
+
+html[data-theme="dark"] input {
+  color: #1A2238;
 }
 
 /* ── Badges / pills ── */
@@ -594,8 +598,8 @@ a { text-decoration: none; color: inherit; }
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--color-text-primary);
-  color: white;
+  background: #1A2238;
+  color: #FFFFFF;
   padding: 12px 20px;
   border-radius: var(--radius-pill);
   font-size: 13px;
@@ -604,10 +608,15 @@ a { text-decoration: none; color: inherit; }
   max-width: 90%;
 }
 
+html[data-theme="dark"] .toast {
+  background: #1A2238;
+  color: #FFFFFF;
+}
+
 .show_seat {
   background: whitesmoke;
   width: 120px;
-  height: 65px;
+  height: 75px;
   padding: 10px 10px;
   border-radius: 10px;
   background: var(--color-surface);
@@ -625,4 +634,185 @@ a { text-decoration: none; color: inherit; }
   grid-column: span 3;
   display: grid;
   grid-template-columns: subgrid; /* Inherits the alignment of the master container */
+}
+  .card1 {
+    margin-top: 25px;
+    width: 385px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 10px 30px rgba(30, 41, 59, 0.15);
+  }
+ 
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+ 
+  .card-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+ 
+  .view-full {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2f6bff;
+    text-decoration: none;
+  }
+ 
+  .map-area {
+    position: relative;
+    height: 190px;
+    background: #dcecfb;
+    border: 2px solid #2f6bff;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+ 
+  .floor-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #4b5563;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+  }
+ 
+  .pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    width: 46px;
+    height: 46px;
+    opacity: 0.55;
+  }
+ 
+  .pin svg {
+    width: 100%;
+    height: 100%;
+    fill: #7fb8ef;
+  }
+ 
+  .status-dots {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    display: flex;
+    gap: 6px;
+  }
+ 
+  .status-dots span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+ 
+  .dot-green { background: #22c55e; }
+  .dot-red   { background: #ef4444; }
+  .dot-gray  { background: #cbd5e1; }
+
+/* Bell button */
+.notif-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  color: white;
+}
+
+.notif-dot {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: red;
+}
+
+.notif-page-header {
+  display: flex;
+  gap: 15%;
+  align-items: center;
+  padding: 10px 4px;
+}
+
+.helo {
+  font-size: 14px;
+  color: var(--color-text-primary);
+  margin-left: 4px;
+}
+
+.back-btn {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  padding-top: 40px;
+
+}
+
+.notif-error {
+  font-size: 12px;
+  color: #a15c00;
+  background: #fff4e0;
+  border: 1px solid #ffdca0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 0 0 12px;
+}
+
+.notif-list {
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* centers each notif-item horizontally */
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;         /* keeps items from stretching too wide */
+  margin: 0 auto;           /* centers the whole list block on the page */
+}
+
+.notif-item {
+  width: 100%;              /* items fill the centered container */
+  border: 1px solid #cfe3fb;
+  background: #eaf3ff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;       /* centers the text inside each item */
+}
+
+.notif-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 2px;
+}
+
+.notif-body {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.notif-empty {
+  position: absolute;
+  font-size: 13px;
+  color: #888;
+  text-align: center;
+  padding: 20px 0;
+  top: 50%;
+  transform: translateY(-20%);
 }

@@ -141,7 +141,7 @@ export default function MyReservations() {
                           ? (expired ? 'Check-in window closed' : 'Check-in QR')
                           : 'Check-out QR'}
                       </p>
-                      <p className="text-muted" style={{ fontSize: 12, marginTop: 2, color: expired ? "black" : "#dadada" }}>
+                      <p className="text-muted" style={{ fontSize: 12, marginTop: 2, color: expired ? 'var(--color-text-primary)' : '#dadada' }}>
                         {isPending
                           ? (expired
                               ? 'This reservation has expired and will be removed shortly'

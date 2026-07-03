@@ -7,6 +7,7 @@ import Button from '../components/Button';
 import Toast from '../components/Toast';
 import { useToast } from '../components/useToast';
 import person from '../assets/person.svg';
+import notification from '../pages/Notification'
 
 export default function Home() {
   const { user } = useAuth();
@@ -15,6 +16,7 @@ export default function Home() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reserving, setReserving] = useState(false);
+
 
   useEffect(() => {
     api.get('/seats/stats')
@@ -51,11 +53,19 @@ export default function Home() {
         <div
           style={{
             width: 40, height: 40, borderRadius: 12, background: 'var(--color-primary)',
-            color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'white', play: 'flex', alignItems: 'center', justifyContent: 'center',
             fontWeight: 600,
           }}
         >
-          {user?.fullName?.[0] || 'S'}
+          <button
+            className="notif-btn"
+            aria-label="Open notifications"
+            onClick={() => navigate('/notifications')}
+          >
+            🔔
+            <span className="notif-dot"></span>
+          </button>
+
         </div>
       </div>
 
@@ -68,17 +78,17 @@ export default function Home() {
           <div className="flex-row" style={{ gap: 16, marginTop: 8 }}>
             <div className='show_seat'>
               <p style={{ color: 'blue', fontSize: 28, fontWeight: 700 }}>{stats?.available ?? 0}</p>
-              <p style={{ color: 'black', fontSize: 11 }}>Available</p>
+              <p style={{ color: 'var(--color-text-primary)', fontSize: 11 }}>Available</p>
             </div >
 
             <div className='show_seat'>
               <p style={{ color: 'red', fontSize: 28, fontWeight: 700 }}>{stats?.occupied ?? 0}</p>
-              <p style={{ color: 'black', fontSize: 11 }}>Occupied</p>
+              <p style={{ color: 'var(--color-text-primary)', fontSize: 11 }}>Occupied</p>
             </div>
 
             <div className='show_seat'>
               <p style={{ color: 'rgb(31, 146, 35)', fontSize: 28, fontWeight: 700 }}>{stats?.total ?? 0}</p>
-              <p style={{ color: 'black', fontSize: 11 }}>Total</p>
+              <p style={{ color: 'var(--color-text-primary)', fontSize: 11 }}>Total</p>
             </div>
           </div>
         )}
@@ -101,12 +111,31 @@ export default function Home() {
         </div>
       </div>
 
-      <Button onClick={handleQuickReserve} loading={reserving} className="mt-24">
-        Reserve a seat now
-      </Button>
-
       <Toast message={message} />
       <BottomNav />
+
+      <div className="card1">
+        <div className="card-header">
+          <h2 className="card-title">Library Map</h2>
+          <button className="view-full " onClick={() => navigate('/map')}>
+            View Full
+          </button>
+        </div>
+        <div className="map-area">
+          <span className="floor-badge">Floor</span>
+          <div className="pin" onClick={() => navigate('/map')}>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7 12 8 12s8-6.75 8-12c0-4.42-3.58-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+            </svg>
+          </div>
+          <div className="status-dots">
+            <span className="dot-green"></span>
+            <span className="dot-red"></span>
+            <span className="dot-gray"></span>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }

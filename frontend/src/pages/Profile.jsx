@@ -81,7 +81,7 @@ export default function Profile() {
   };
 
   const displayName = user?.fullName || profile?.full_name || '';
-  const accentColor = darkMode ? '#3f9b0b' : '#0B56A4';
+  const accentColor = 'var(--color-primary)';
 
   return (
     <div className="screen">

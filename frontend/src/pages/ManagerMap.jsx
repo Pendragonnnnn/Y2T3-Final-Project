@@ -64,14 +64,14 @@ export default function ManagerMap() {
       {/* ── Bottom sheet: open/block toggle ── */}
       {console.log('render — selected is:', selected)}
       {selected && (
-        <div className="card mt-16" style={{ position: 'sticky', bottom: -20, paddingLeft: '16px' ,paddingTop: '16px', display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'flex-start'}}>
+        <div className="card mt-16" style={{ position: 'sticky', bottom: -20, paddingLeft: '16px' ,paddingTop: '16px', display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'flex-start', backgroundColor: 'var(--color-bg)'}}>
 
           <button
             onClick={handleToggle}
             disabled={busy}
             style={{
               width: '100%', padding: '12px 0', borderRadius: 8,
-              background: selected.current_status === 'blocked' ? '#53954621' : '#a90505',
+              background: selected.current_status === 'blocked' ? '#53954631' : '#a90505',
               
               color: selected.current_status === 'blocked' ? '#539546' : '#ffffff',
               fontSize: 13, fontWeight: 600, cursor: busy ? 'not-allowed' : 'pointer',

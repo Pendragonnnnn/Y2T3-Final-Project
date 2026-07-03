@@ -80,6 +80,7 @@ const MANAGER_SEAT_CONFIG = {
 export default function InteractiveSeatMap({
   seats,
   selectedSeatId,
+  highlightedSeatId,
   onSelectSeat,
   interactive = true,
   mode = 'student',
@@ -185,9 +186,9 @@ export default function InteractiveSeatMap({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 
       {/* ── Legend strip ── */}
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className='file-b-container'>
         <p style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>
-          {isManager ? 'Tap a seat to manage it' : 'Drag to pan · scroll to zoom'}
+          {isManager ? 'Tap a seat to manage it' : ''}
         </p>
       </div>
 
@@ -268,6 +269,7 @@ export default function InteractiveSeatMap({
                 {tableSeats.slice(0, 4).map((seat, idx) => {
                   const offset = SEAT_OFFSETS[idx] || SEAT_OFFSETS[0];
                   const isSelected = seat.seat_id === selectedSeatId;
+                  const isHighlighted = seat.seat_id === highlightedSeatId;
                   const cfg = SEAT_CONFIG[seat.current_status] || SEAT_CONFIG.blocked;
                   const canTap = isSeatSelectable(seat);
                   const hasOccupant = isManager && seat.current_status === 'occupied' && seat.occupant_name;
@@ -284,24 +286,28 @@ export default function InteractiveSeatMap({
                         width: 44, height: 44,
                         borderRadius: '50%',
                         transform: `rotate(${-rotation}deg)`,
-                        background: isSelected
-                          ? ('var(--color-primary)')
-                          : cfg.bg,
-                        border: `2px solid ${isSelected ? ('var(--color-primary)') : cfg.border}`,
-                        color: isSelected ? ('#fff') : cfg.color,
+                        background: isHighlighted
+                          ? '#fde68a'
+                          : isSelected
+                            ? ('var(--color-primary)')
+                            : cfg.bg,
+                        border: `2px solid ${isHighlighted ? '#f59e0b' : isSelected ? ('var(--color-primary)') : cfg.border}`,
+                        color: isHighlighted ? '#92400e' : isSelected ? ('#fff') : cfg.color,
                         fontSize: hasOccupant ? 9 : 10,
                         fontWeight: 700,
                         cursor: canTap ? 'pointer' : 'not-allowed',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: isSelected
-                          ? ('0 0 0 3px rgba(11,86,164,0.35), 0 4px 12px rgba(11,86,164,0.4)')
-                          : ('0 3px 8px rgba(0,0,0,0.25)'),
+                        boxShadow: isHighlighted
+                          ? ('0 0 0 3px rgba(245,158,11,0.35), 0 6px 16px rgba(245,158,11,0.28)')
+                          : isSelected
+                            ? ('0 0 0 3px rgba(11,86,164,0.35), 0 4px 12px rgba(11,86,164,0.4)')
+                            : ('0 3px 8px rgba(0,0,0,0.25)'),
                         transition: 'all 0.15s ease',
                         opacity: !isManager && seat.current_status === 'blocked' ? 0.6 : 1,
                       }}
                       title={`${(seat.current_status).toUpperCase()}`}
                     >
-                      {isManager ? seat.seat_id : "【　】"}
+                      {isHighlighted ? '✓' : isManager ? seat.seat_id : '【　】'}
                     </button>
                   );
                 })}

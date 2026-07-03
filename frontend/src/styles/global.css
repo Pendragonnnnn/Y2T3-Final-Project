@@ -613,3 +613,16 @@ a { text-decoration: none; color: inherit; }
   background: var(--color-surface);
   box-shadow: 0 8px 24px rgba(0,0,0,0.18);
 }
+
+/* The main wrapper on the parent page */
+.main-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* The elements inside your separate files */
+.file-a-container, .file-b-container {
+  grid-column: span 3;
+  display: grid;
+  grid-template-columns: subgrid; /* Inherits the alignment of the master container */
+}

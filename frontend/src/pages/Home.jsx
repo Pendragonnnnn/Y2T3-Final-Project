@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -7,7 +7,7 @@ import Button from '../components/Button';
 import Toast from '../components/Toast';
 import { useToast } from '../components/useToast';
 import person from '../assets/person.svg';
-import notification from '../pages/Notification'
+
 
 export default function Home() {
   const { user } = useAuth();
@@ -16,13 +16,68 @@ export default function Home() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reserving, setReserving] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
+  const fetchUnreadCount = useCallback(async () => {
+    if (!user?.userId) return;
+    try {
+      const { data } = await api.get(`/notifications/${user.userId}/count`);
+
+      // Debug: see exactly what the server sent back.
+      console.log('unread-count response:', data);
+
+      // Handle a few possible response shapes defensively:
+      // { unreadCount: 2 }, { count: 2 }, or a raw number.
+      const count =
+        data?.unreadCount ??
+        data?.count ??
+        (typeof data === 'number' ? data : 0);
+
+      setUnreadCount(Number(count) || 0);
+    } catch (err) {
+      console.error('Error fetching unread notifications count:', err);
+    }
+  }, [user]);
 
   useEffect(() => {
-    api.get('/seats/stats')
-      .then(({ data }) => setStats(data.stats))
-      .finally(() => setLoading(false));
-  }, []);
+    const loadStats = async () => {
+      try {
+        const { data } = await api.get('/seats/stats');
+        setStats(data.stats);
+      } finally {
+        setLoading(false);
+      }
+
+      fetchUnreadCount(); // Fetch unread notifications count after loading stats
+    };
+
+    loadStats();
+  }, [fetchUnreadCount]);
+
+  // Listen for the "notificationUpdated" event fired by Notification.jsx
+  // whenever a notification (or all of them) gets marked as read, and
+  // also refresh whenever the user comes back to this tab/screen.
+  useEffect(() => {
+    const handleNotificationUpdated = () => {
+      fetchUnreadCount();
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        fetchUnreadCount();
+      }
+    };
+
+    window.addEventListener('notificationUpdated', handleNotificationUpdated);
+    window.addEventListener('focus', fetchUnreadCount);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      window.removeEventListener('notificationUpdated', handleNotificationUpdated);
+      window.removeEventListener('focus', fetchUnreadCount);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [fetchUnreadCount]);
 
   const handleQuickReserve = async () => {
     setReserving(true);
@@ -36,7 +91,7 @@ export default function Home() {
       setReserving(false);
     }
   };
-  
+
   return (
     <div className="screen">
       <div className="screen-header">
@@ -63,9 +118,12 @@ export default function Home() {
             onClick={() => navigate('/notifications')}
           >
             🔔
-            <span className="notif-dot"></span>
+            {unreadCount > 0 && (
+              <span className="notif-dot">{unreadCount > 99 ? '99+' : unreadCount}</span>
+            )}
+            
           </button>
-
+          
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const db = require('../config/db');
 const { JWT_SECRET } = require('../middleware/auth');
 
 function normalizeRole(role) {

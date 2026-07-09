@@ -74,20 +74,19 @@ export default function ManagementIssuesList() {
       ) : issues.length === 0 ? (
         <p className="text-muted text-center mt-12">No feedback submitted yet.</p>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex-col">
           {issues.map(issue => (
             <div key={issue.feedback_id} className="card" style={{ borderLeft: `4px solid ${SENTIMENT_COLORS[issue.sentiment] || '#A0AAC2'}` }}>
               <div className="mb-2" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: '10px', alignItems: 'center' }}>
                   <div className="font-semibold">{issue.full_name || 'Anonymous User'}</div>
-                  <div style={{ 
-                    fontSize: '11px', 
-                    fontWeight: 600, 
+                  <div style={{
+                    fontSize: '11px',
+                    fontWeight: 600,
                     padding: '2px 8px',
                     borderRadius: '4px',
-                    backgroundColor: SENTIMENT_COLORS[issue.sentiment] || '#A0AAC2',
-                    color: 'white',
-                   
+                    backgroundColor: SENTIMENT_COLORS[issue.sentiment] || 'orange',
+                    color: 'black',
                     display: 'inline-block'
                   }}>
                     {SENTIMENT_LABELS[issue.sentiment] || issue.sentiment}

@@ -171,7 +171,6 @@ a { text-decoration: none; color: inherit; }
 }
 
 .faq-screen-header{
- 
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
@@ -323,8 +322,12 @@ a { text-decoration: none; color: inherit; }
   padding: 16px;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--color-border);
-}
 
+}
+.card:hover {
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-2px);
+}
 /* ── Form inputs ── */
 .field {
   margin-bottom: 16px;
@@ -1006,7 +1009,7 @@ html[data-theme="dark"] .toast {
   gap: 14px;
   width: 100%;
   max-width: 100%;
-  margin: 0;
+  cursor: pointer;
 }
 
 .notif-date-heading {
@@ -1025,11 +1028,11 @@ html[data-theme="dark"] .toast {
   border-radius: 16px;
   padding: 18px 16px;
   text-align: left;
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition: background 0.5s ease, transform 0.15s ease;
 }
 
-.notif-item:hover {
-  transform: translateY(-1px);
+.notif-item:hover{
+  transform: translateY(-2px);
 }
 
 .notif-item-header {
@@ -1099,4 +1102,15 @@ html[data-theme="dark"] .toast {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.flex-col{
+  display: grid;
+  gap: 12px;
+  cursor: pointer;
+}
+.notif-date-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }

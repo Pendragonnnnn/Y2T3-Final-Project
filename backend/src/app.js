@@ -8,11 +8,42 @@ const reservationRoutes = require('./routes/reservationRoutes');
 const managerRoutes = require('./routes/managerRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+require('./models/noShowJob');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Swagger Documentations',
+      version: '1.0.0',
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }], // applies globally to all documented routes
+  },
+  apis: ['./src/routes/*.js'],
+};
+
+const openapiSpecification = swaggerJsdoc(options);
+
+
+app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(openapiSpecification));
+
+
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'smart-library-api' }));
 

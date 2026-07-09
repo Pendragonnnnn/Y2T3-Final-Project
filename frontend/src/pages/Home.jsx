@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -16,19 +16,38 @@ export default function Home() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reserving, setReserving] = useState(false);
+  const [hasActive, setHasActive] = useState(false);
+  const [report, setReport] = useState(null);
 
+const checkActiveReservation = useCallback(async () => {
+  try {
+    const { data } = await api.get('/reservations/check-status'); // Add this endpoint in your backend
+    setHasActive(data.hasActive);
+  } catch (err) {
+    console.error("Failed to check status", err);
+  }
+}, []);
 
   useEffect(() => {
     api.get('/seats/stats')
       .then(({ data }) => setStats(data.stats))
       .finally(() => setLoading(false));
+
+    api.get('/reservations/peakHours')
+      .then(({ data }) => setReport(data))
+      .catch((err) => console.error("Error fetching report data:", err))
+      .finally(() => setLoading(false));
+
+    checkActiveReservation();
   }, []);
+
+  
 
   const handleQuickReserve = async () => {
     setReserving(true);
     try {
       const { data } = await api.post('/reservations/quick');
-      showToast(`Seat ${data.seat.seat_id} reserved! Awaiting manager approval.`);
+      showToast(`Seat reserved!`);
       setTimeout(() => navigate('/reservations'), 1200);
     } catch (err) {
       showToast(err.response?.data?.error || 'Could not reserve a seat');
@@ -36,11 +55,23 @@ export default function Home() {
       setReserving(false);
     }
   };
+
+  const peakHours = report?.peakHours;
+
+  const maxCount = peakHours && peakHours.length > 0 
+    ? Math.max(...peakHours.map(p => p.count)) 
+    : 1;
   
   return (
     <div className="screen">
       <div className="screen-header">
+        {hasActive && (
+          <div className="alert alert-warning">
+            You already have a pending or active reservation.
+          </div>
+        )}
         <div className="welcome-card">
+          
           <button className="profile-icon" type="button" onClick={() => navigate('/profile')}>
             <img src={person} alt="Profile" />
           </button>
@@ -69,6 +100,8 @@ export default function Home() {
         </div>
       </div>
 
+      
+
       {/* Seat stats card — Mobile 2 style with two stat pills */}
       <div className="card mt-8" style={{ background: 'linear-gradient(270deg, var(--color-primary), var(--color-primary-light))', padding: 20 }}>
         <p style={{ color: 'white', fontSize: 14, paddingBottom: 10 }}>Seats available right now</p>
@@ -77,17 +110,17 @@ export default function Home() {
         ) : (
           <div className="flex-row" style={{ gap: 16, marginTop: 8 }}>
             <div className='show_seat'>
-              <p style={{ color: 'blue', fontSize: 28, fontWeight: 700 }}>{stats?.available ?? 0}</p>
+              <p style={{ color: 'var(--color-primary)', fontSize: 28, fontWeight: 700 }}>{stats?.available ?? 0}</p>
               <p style={{ color: 'var(--color-text-primary)', fontSize: 11 }}>Available</p>
             </div >
 
             <div className='show_seat'>
-              <p style={{ color: 'red', fontSize: 28, fontWeight: 700 }}>{stats?.occupied ?? 0}</p>
+              <p style={{ color: '#a90505', fontSize: 28, fontWeight: 700 }}>{stats?.occupied ?? 0}</p>
               <p style={{ color: 'var(--color-text-primary)', fontSize: 11 }}>Occupied</p>
             </div>
 
             <div className='show_seat'>
-              <p style={{ color: 'rgb(31, 146, 35)', fontSize: 28, fontWeight: 700 }}>{stats?.total ?? 0}</p>
+              <p style={{ color: '#539546', fontSize: 28, fontWeight: 700 }}>{stats?.total ?? 0}</p>
               <p style={{ color: 'var(--color-text-primary)', fontSize: 11 }}>Total</p>
             </div>
           </div>
@@ -97,15 +130,22 @@ export default function Home() {
       {/* Reservation actions — Mobile 4 style: choose your own seat vs random */}
       <h3 style={{ fontSize: 15, marginTop: 24, marginBottom: 12 }}>Find a seat</h3>
       <div className="stack">
-        <div className="card flex-between" onClick={handleQuickReserve} style={{ cursor: 'pointer' }}>
+        <div className="card flex-between" onClick={handleQuickReserve} disabled={hasActive} style={{ cursor: 'pointer' }}>
           <div>
-            <p style={{ fontWeight: 600, fontSize: 14 }}>⚡ Quick Random Reserve</p>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'center'}}>
+              <div style={{ fontSize: "18px" }}>ϟ</div>
+              <p style={{ fontWeight: 600, fontSize: 14 }}> Quick Random Reserve</p>
+            </div>
+            
             <p className="text-muted">Instantly grab any available seat</p>
           </div>
         </div>
-        <div className="card flex-between" onClick={() => navigate('/map')} style={{ cursor: 'pointer' }}>
+        <div className="card flex-between"  onClick={() => navigate('/map')} style={{ cursor: 'pointer' }}>
           <div>
-            <p style={{ fontWeight: 600, fontSize: 14 }}>🗺️ Choose Your Own Seat</p>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'center'}}>
+              <div style={{ fontSize: "18px" }} >𖥔</div>
+              <p style={{ fontWeight: 600, fontSize: 14 }}> Choose Your Own Seat</p>
+            </div>
             <p className="text-muted">Browse the real-time seat map</p>
           </div>
         </div>
@@ -116,24 +156,47 @@ export default function Home() {
 
       <div className="card1">
         <div className="card-header">
-          <h2 className="card-title">Library Map</h2>
-          <button className="view-full " onClick={() => navigate('/map')}>
-            View Full
-          </button>
+          <h2 className="card-title">Peak Booking Hours </h2>
         </div>
-        <div className="map-area">
-          <span className="floor-badge">Floor</span>
-          <div className="pin" onClick={() => navigate('/map')}>
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7 12 8 12s8-6.75 8-12c0-4.42-3.58-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-            </svg>
+        <div className="card mt-16">
+        <p style={{ fontWeight: 200, marginBottom: 20, color:'#666666', fontSize:'12px'}}>Most recent 30 days</p>
+        
+        {!peakHours || peakHours.length === 0 ? (
+          <p className="text-muted text-center py-4">No hourly data tracked yet.</p>
+        ) : (
+          <div 
+            style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'flex-end', 
+              height: '140px', 
+              paddingTop: '20px',
+              borderBottom: '1px solid var(--color-border)'
+            }}
+          >
+            {[...peakHours]
+              .sort((a, b) => a.hour - b.hour)
+              .map((item) => {
+                const barHeight = `${Math.min(Math.max((item.count / maxCount) * 100, 8), 100)}%`;
+                const displayHour = item.hour >= 12 
+                  ? `${item.hour === 12 ? 12 : item.hour - 12}pm` 
+                  : `${item.hour}am`;
+                console.log(`Hour: ${item.hour}, Count: ${item.count}, Max: ${maxCount}, Height: ${barHeight}`);
+                return (
+                  <div key={item.hour} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, height: '100%', justifyContent: 'flex-end' }}>
+                    <span style={{ fontSize: '10px', color: 'var(--color-text-primary)', fontWeight: '600', marginBottom: '4px' }}>
+                      {item.count}
+                    </span>
+                    <div style={{ width: '65%', height: barHeight, backgroundColor: '#4095F6', borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '8px', flexShrink: 0 }} title={`${item.count} reservations at ${displayHour}`} />
+                    <span className="text-muted" style={{ fontSize: '10px', marginTop: '8px', whiteSpace: 'nowrap' }}>
+                      {displayHour}
+                    </span>
+                  </div>
+                );
+              })}
           </div>
-          <div className="status-dots">
-            <span className="dot-green"></span>
-            <span className="dot-red"></span>
-            <span className="dot-gray"></span>
-          </div>
-        </div>
+        )}
+      </div>
       </div>
 
     </div>

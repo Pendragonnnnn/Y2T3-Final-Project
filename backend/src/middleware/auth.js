@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
 
 function normalizeRole(role) {
-  return typeof role === 'string' ? role.toLowerCase() : role;
+  return typeof role === 'string' ? role.toLowerCase() : 'student';
 }
 
 function authenticate(req, res, next) {
@@ -14,6 +14,9 @@ function authenticate(req, res, next) {
   const token = header.split(' ')[1];
   try {
     const payload = jwt.verify(token, JWT_SECRET);
+    if (!payload || !payload.userId) {
+      return res.status(401).json({ error: 'Invalid token payload' });
+    }
     payload.role = normalizeRole(payload.role);
     req.user = payload; // { userId, role, email }
     next();

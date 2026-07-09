@@ -9,6 +9,10 @@ const User = require('../models/User');
 exports.quickRandomReserve = async (req, res) => {
   try {
     const available = await Seat.findAvailable();
+    const hasActive = await Reservation.activeReservationCount(req.user.userId);
+    if (hasActive) {
+      return res.status(403).json({ error: 'You already have an active or pending reservation.' });
+    }
     if (available.length === 0) {
       return res.status(409).json({ error: 'No seats are currently available' });
     }
@@ -406,5 +410,19 @@ exports.scanCheckOut = async (req, res) => {
   } catch (err) {
     console.error('scanCheckOut error:', err);
     res.status(500).json({ error: 'Failed to process check-out.' });
+  }
+};
+
+exports.displayPeakHours = async (req, res) => {
+  try {
+    const peakHours = await Reservation.getPeakHours();
+    res.json({
+      peakHours: peakHours,
+    }
+    );
+  }
+  catch (err) {
+    console.log(err);
+    res.status(500).json({ error: 'Failed to process.' });
   }
 };

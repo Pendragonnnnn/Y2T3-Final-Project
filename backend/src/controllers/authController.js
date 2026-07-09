@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const db = require('../config/db');
 const User = require('../models/User');
 const { JWT_SECRET } = require('../middleware/auth');
 
@@ -93,12 +94,10 @@ exports.changePassword = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Plain-text comparison (swap for bcrypt.compare once hashing is added)
     if (currentPassword !== stored) {
       return res.status(422).json({ error: 'Current password is incorrect' });
     }
 
-    // Save the new password (swap for bcrypt.hash once hashing is added)
     await User.updatePassword(req.user.userId, newPassword);
 
     res.json({ message: 'Password updated successfully' });
@@ -112,7 +111,7 @@ exports.updateName = async (req, res) => {
   try {
     const { fullName } = req.body;
     if (!fullName?.trim()) return res.status(400).json({ error: 'Name is required.' });
-    await db.query('UPDATE User SET full_name = ? WHERE user_id = ?', [fullName.trim(), req.user.userId]);
+    await db.query('UPDATE user SET full_name = ? WHERE user_id = ?', [fullName.trim(), req.user.userId]);
     res.json({ message: 'Name updated' });
   } catch (err) {
     console.error(err);

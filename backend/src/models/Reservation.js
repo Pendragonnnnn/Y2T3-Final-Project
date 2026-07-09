@@ -15,28 +15,6 @@ function toDbStatus(status) {
   return 'Pending';
 }
 
-/**
- * Expires any Pending reservations older than 30 minutes.
- * Marks them Inactive and frees their seats in one pass.
- * Called lazily before any query that would be affected by stale Pending rows.
- */
-async function expireStaleReservations() {
-  await db.query(
-    `UPDATE Seat
-     SET current_status = 'Available'
-     WHERE seat_id IN (
-       SELECT seat_id FROM Reservation_Record
-       WHERE outcome = 'Pending'
-         AND start_time <= NOW() - INTERVAL 30 MINUTE
-     )`
-  );
-  await db.query(
-    `UPDATE Reservation_Record
-     SET outcome = 'Inactive', end_time = NOW()
-     WHERE outcome = 'Pending'
-       AND start_time <= NOW() - INTERVAL 30 MINUTE`
-  );
-}
 
 class Reservation {
   static async create(data) {
@@ -48,7 +26,6 @@ class Reservation {
   }
 
   static async activeReservationCount(userId) {
-    await expireStaleReservations();
     const [rows] = await db.query(
       "SELECT reservation_id FROM Reservation_Record WHERE user_id = ? AND outcome IN ('Pending', 'Active')",
       [userId]
@@ -65,7 +42,6 @@ class Reservation {
   }
 
   static async findActiveByUser(userId) {
-    await expireStaleReservations();
     const [rows] = await db.query(
       `SELECT r.*, t.table_label
        FROM Reservation_Record r
@@ -81,7 +57,6 @@ class Reservation {
   // Fetches Pending + Active reservations for the manager dashboard.
   // Pending always floats to the top, then sorted by date within each group.
   static async listActiveAndPending() {
-    await expireStaleReservations();
     const [rows] = await db.query(
       `SELECT r.*, u.full_name, u.email, t.table_label
        FROM Reservation_Record r
@@ -109,7 +84,6 @@ class Reservation {
   }
 
   static async listPending() {
-    await expireStaleReservations();
     const [rows] = await db.query(
       `SELECT r.*, u.full_name, u.email, t.table_label
        FROM Reservation_Record r
@@ -166,7 +140,6 @@ class Reservation {
   // computed when both check_in_time and end_time are present — otherwise the
   // student either never checked in or the session is still ongoing.
   static async recentByUser(userId, limit = 10) {
-    await expireStaleReservations();
     const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : 10;
     const [rows] = await db.query(
       `SELECT r.*, t.table_label,

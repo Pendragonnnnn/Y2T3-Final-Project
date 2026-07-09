@@ -16,7 +16,7 @@
 
 const db = require('../config/db');
 
-const CHECK_INTERVAL_MS = 60 * 1000;   // run every 60 seconds
+const CHECK_INTERVAL_MS = 60 * 1000;   // 60 seconds
 const NO_SHOW_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
 
 async function expireNoShows() {

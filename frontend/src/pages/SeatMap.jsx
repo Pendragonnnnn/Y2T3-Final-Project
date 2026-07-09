@@ -78,7 +78,6 @@ export default function SeatMap() {
       <div className="screen-header">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <h2 className="screen-title">Library Map</h2>
-          
         </div>
         {hasActive && (
           <div className="alert alert-warning">

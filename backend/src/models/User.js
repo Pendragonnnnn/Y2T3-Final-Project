@@ -58,7 +58,7 @@ class User {
   }
 
   /**
-   * Returns the stored password hash/value for a given user.
+   * Returns the stored password value for a given user.
    * Used by the change-password flow to verify the current password.
    */
   static async getPasswordById(userId) {
@@ -71,7 +71,6 @@ class User {
 
   /**
    * Overwrites the stored password for a user.
-   * Pass an already-hashed value when bcrypt is added.
    */
   static async updatePassword(userId, newPassword) {
     await db.query(

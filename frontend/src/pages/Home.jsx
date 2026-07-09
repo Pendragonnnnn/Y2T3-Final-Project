@@ -108,7 +108,7 @@ export default function Home() {
         <div
           style={{
             width: 40, height: 40, borderRadius: 12, background: 'var(--color-primary)',
-            color: 'white', play: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontWeight: 600,
           }}
         >

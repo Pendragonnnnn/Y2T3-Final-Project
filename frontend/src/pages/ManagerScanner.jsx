@@ -181,9 +181,17 @@ export default function ManagerScanner() {
           className="card"
           style={{
             maxWidth: 420,
-            margin: '16px auto 0',
-            padding: '20px 24px',
-            borderLeft: `4px solid ${lastScan.outcome === 'success' ? 'var(--color-success)' : 'var(--color-danger)'}`,
+            marginTop: 16,
+            marginRight: 'auto',
+            marginBottom: 0,
+            marginLeft: 'auto',
+            paddingTop: 20,
+            paddingRight: 24,
+            paddingBottom: 20,
+            paddingLeft: 24,
+            borderLeftWidth: 4,
+            borderLeftStyle: 'solid',
+            borderLeftColor: lastScan.outcome === 'success' ? 'var(--color-success)' : 'var(--color-danger)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>

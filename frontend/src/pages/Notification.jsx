@@ -26,7 +26,7 @@ export default function Notification() {
 
     if (diff < 3600) {
       const mins = Math.floor(diff / 60);
-      return `${mins} mn${mins > 1 ? "s" : ""} ago`;
+      return `${mins} min${mins > 1 ? "s" : ""} ago`;
     }
 
     if (diff < 86400) {
@@ -39,6 +39,31 @@ export default function Notification() {
     }
 
     return created.toLocaleDateString();
+  };
+
+  const formatDateHeading = (isoDate) => {
+    const d = new Date(isoDate);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = d.toLocaleString(undefined, { month: 'short' }).toUpperCase();
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
+  };
+
+  const groupByDate = (items) => {
+    return items.reduce((acc, it) => {
+      const key = new Date(it.created_at).toISOString().slice(0, 10);
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(it);
+      return acc;
+    }, {});
+  };
+
+  const formatTimeOnly = (date) => {
+    try {
+      return new Date(date).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    } catch (e) {
+      return '';
+    }
   };
 
   // =========================
@@ -126,14 +151,27 @@ export default function Notification() {
   return (
     <div className="screen">
 
-      {/* Header */}
-      <div className="notif-page-header">
+      <div className="faq-screen-header">
         <button
-          className="back-btn"
           onClick={() => navigate(-1)}
-        > ← Back
+          style={{
+            background: 'none',
+            border: 'none',
+            fontSize: 18,
+            cursor: 'pointer',
+            padding: 0,
+            lineHeight: 2,
+            alignSelf: 'flex-start',
+            color: 'var(--color-primary)',
+          }}
+          aria-label="Go back"
+        >
+          く
         </button>
-        <h2 className="screen-title"> Notifications </h2>
+
+        <h2 className="screen-title">Notifications</h2>
+
+        <div style={{ width: 22 }} />
       </div>
 
       {/* Mark All Button */}
@@ -172,60 +210,51 @@ export default function Notification() {
       {/* Notification List */}
       {!loading && notifications.length > 0 && (
         <div className="notif-list">
-          {notifications.map((item) => (
-            <div
-              key={item.notification_id}
-              className={`notif-item ${
-                item.is_read ? "" : "unread"
-              }`}
-              onClick={() =>
-                markAsRead(item.notification_id)
-              }
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }} >
-                <h4 style={{ margin: 0 }}>
-                  {item.title}
-                </h4>
+          {(() => {
+            const grouped = groupByDate(notifications);
+            const keys = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+            return keys.map((dateKey) => (
+              <div key={dateKey} className="notif-date-section">
+                <div className="notif-date-heading">{formatDateHeading(dateKey)}</div>
+                {grouped[dateKey].map((item) => (
+                  <div
+                    key={item.notification_id}
+                    className={`notif-item ${item.is_read ? 'read' : 'unread'}`}
+                    onClick={() => markAsRead(item.notification_id)}
+                  >
+                    <div className="notif-item-header">
+                      <div className="notif-item-title-group">
+                        <h4 style={{ margin: 0 }}>{item.title}</h4>
 
-                {!item.is_read && (
-                  <span style={{ color: "red", fontWeight: "bold"}} >
-                    ●
-                  </span>
-                )}
-                
+                        {!item.is_read && (
+                          <span className="notif-unread-dot">●</span>
+                        )}
+                      </div>
+
+                      <span className="notif-time" title={new Date(item.created_at).toLocaleString()}>
+                        {formatTimeOnly(item.created_at)}
+                      </span>
+                    </div>
+
+                    {item.seat_id && (
+                      <p>
+                        <strong>Seat:</strong> {item.seat_id}
+                      </p>
+                    )}
+                    {item.reservation_id && (
+                      <p>
+                        <strong>Reservation:</strong> #{item.reservation_id}
+                      </p>
+                    )}
+                    
+                    <hr />
+                    <p style={{fontSize: 13}}>{item.message_body}</p>
+
+                  </div>
+                ))}
               </div>
-
-              {item.seat_id && (
-                <p>
-                  <strong>Seat:</strong> {item.seat_id}
-                </p>
-              )}
-              {item.reservation_id && (
-                <p>
-                  <strong>Reservation:</strong> #
-                  {item.reservation_id}
-                </p>
-              )}
-              
-              <hr />
-              <p style={{fontSize: 13}}>{item.message_body}</p>
-
-              <p
-                title={new Date(
-                  item.created_at
-                ).toLocaleString()}
-                style={{
-                  color: "#161313",
-                  fontSize: 13,
-                  marginTop: 10,
-                  position: "relative",
-                  right: -145,
-                }}
-              >
-                {formatTime(item.created_at)}
-              </p>
-            </div>
-          ))}
+            ));
+          })()}
         </div>
       )}
 

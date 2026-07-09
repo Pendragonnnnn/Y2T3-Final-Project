@@ -71,8 +71,7 @@ export default function ManagerReport() {
     : 1;
 
   const getIssueCount = () => {
-    if (!breakdown?.management_issue) return 0;
-    return Array.isArray(breakdown.management_issue) ? breakdown.management_issue.length : breakdown.management_issue;
+    return total || 0;
   };
 
   return (
@@ -168,7 +167,7 @@ export default function ManagerReport() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p style={{ fontWeight: 600, margin: 0 }}>User Feedback</p>
           <Link to="/manager/feedback/management-issues" style={{ color: '#4095F6', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
-            View feedback &rarr;
+            View feedback
           </Link>
         </div>
 

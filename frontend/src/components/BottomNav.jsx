@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const STUDENT_TABS = [
@@ -17,8 +17,14 @@ const MANAGER_TABS = [
 ];
 
 export default function BottomNav() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const tabs = user?.role?.toLowerCase() === 'manager' ? MANAGER_TABS : STUDENT_TABS;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <nav className="bottom-nav">
@@ -32,6 +38,12 @@ export default function BottomNav() {
           <span>{tab.label}</span>
         </NavLink>
       ))}
+
+      {/* Logout button for desktop sidebar */}
+      <div className="logout-item" role="button" tabIndex={0} onClick={handleLogout} onKeyDown={e => { if (e.key === 'Enter') handleLogout(); }}>
+        <span className="nav-icon">⎋</span>
+        <span>Log out</span>
+      </div>
     </nav>
   );
 }

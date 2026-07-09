@@ -1,6 +1,6 @@
 :root {
   /* Color tokens — derived from the Figma mockups (blue gradient app theme) */
-  --color-primary: #0B56A4;
+  --color-primary: #2D5FE0;
   --color-primary-dark: #1E3F9E;
   --color-primary-light: #5C84F2;
   --color-accent: #4ECDC4;
@@ -137,15 +137,24 @@ a { text-decoration: none; color: inherit; }
   color: var(--color-text-primary);
 }
 
-@media (min-width: 600px) {
+@media (min-width: 900px) {
   .app-shell {
-    margin: 24px auto;
-    min-height: calc(100vh - 48px);
-    border-radius: 32px;
-    box-shadow: var(--shadow-shell);
-    border: 1px solid var(--shell-border);
+    max-width: none;
+    margin: 0;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
     overflow: hidden;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
   }
+
+  .show_seat {
+    height: 300px;
+  }
+
 }
 
 /* home page*/
@@ -169,8 +178,15 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 20px;
 }
 
+.home-screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
 .screen-header {
-  
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -179,13 +195,30 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 20px;
 }
 
+.card1-desktop {
+  display: none;
+  width: min(100%, 385px);
+  margin: 0 auto;
+}
+
+.card1-mobile {
+  margin-top: 25px;
+  width: min(100%, 385px);
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(30, 41, 59, 0.15);
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .screen-title {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 20px;
 }
 .welcome-card {
-  width: 300px;
+  width: max-content;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -325,7 +358,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 html[data-theme="dark"] input {
-  color: #1A2238;
+  color: #ffffff;
 }
 
 /* ── Badges / pills ── */
@@ -354,15 +387,16 @@ html[data-theme="dark"] input {
 .badge-accepted { background: #539546; color: #ffffff; }
 .badge-checked_in { background: #E5EEFF; color: #2D5FE0; }
 
-/* ── Bottom nav ── */
+/* ── Bottom nav / sidebar ── */
 .bottom-nav {
-  position: absolute;
+  position: fixed;
   bottom: 0; left: 0; right: 0;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: space-around;
   padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+  z-index: 20;
 }
 
 .nav-item {
@@ -373,9 +407,129 @@ html[data-theme="dark"] input {
   font-size: 11px;
   color: var(--color-text-tertiary);
   flex: 1;
+  min-width: 0;
 }
 .nav-item.active { color: var(--color-primary); }
 .nav-icon { font-size: 20px; }
+
+.logout-item { display: none; }
+
+.qr-card {
+  background: var(--card-surface);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+}
+.home-card {
+  background: var(--card-surface);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+  width: 100%;
+  max-width: 385px;
+  box-sizing: border-box;
+}
+
+.home-card-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.home-card-stats {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+
+@media (min-width: 900px) {
+  .home-card{
+    height: 280px;
+  }
+  .home-card-row {
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    gap: 24px;
+  }
+  .home-card,
+  .card1-desktop {
+    width: 385px;
+    min-width: 0;
+  }
+  .qr-card {
+    width: 385px;
+    align-self: center;
+  }
+  .card1-mobile{
+    display: none;
+  }
+  .card1-desktop{
+    margin-top: 25px;
+    width: 385px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 10px 30px rgba(30, 41, 59, 0.15);
+    display: block;
+  }
+  .bottom-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: auto;
+    width: 130px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 24px 0;
+    border-top: none;
+    border-right: 1px solid var(--color-border);
+    box-shadow: 2px 0 24px rgba(0,0,0,0.06);
+  }
+
+  .nav-item {
+    padding: 16px 0;
+    flex: none;
+    width: 100%;
+  }
+
+  .nav-icon {
+    font-size: 24px;
+  }
+
+  .nav-item span:last-child {
+    font-size: 12px;
+    margin-top: 6px;
+    text-align: center;
+  }
+
+  .screen {
+    margin-left: 150px;
+    padding-bottom: 40px;
+  }
+
+  /* Show logout control in sidebar and pin to bottom */
+  .logout-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    padding: 16px 0;
+    margin-top: auto;
+    cursor: pointer;
+    color: var(--color-text-tertiary);
+  }
+  .logout-item:hover { color: var(--color-danger); }
+}
 
 /* ── Seat grid ── */
 .seat-grid {
@@ -623,6 +777,47 @@ html[data-theme="dark"] .toast {
   box-shadow: 0 8px 24px rgba(0,0,0,0.18);
 }
 
+/* Profile page edit controls: make buttons equal width like mobile */
+.profile-edit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.profile-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+}
+.profile-actions .btn { flex: 1; }
+
+/* Profile page width helpers to match mobile UI */
+.profile-card {
+  max-width: 385px; /* match .card1 width used elsewhere */
+  margin: 16px auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-logout {
+  width: 385px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 8px;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+@media (min-width: 900px) {
+  .profile-card { margin-top: 24px; }
+  .profile-logout { 
+    margin-left: 170px;  
+    display: none; 
+  }
+}
+
 /* The main wrapper on the parent page */
 .main-container {
   display: grid;
@@ -724,30 +919,52 @@ html[data-theme="dark"] .toast {
 /* Bell button */
 .notif-btn {
   position: relative;
-  width: 36px;
-  height: 36px;
+  background: none;
   border: none;
-  background: transparent;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
-  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .notif-dot {
   position: absolute;
-  top: 2px;
-  right: 4px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: red;
+  top: -4px;
+  right: -6px;
+  background: #ff3b30;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
+  border: 2px solid white;
 }
 
 .notif-page-header {
   display: flex;
-  gap: 15%;
   align-items: center;
-  padding: 10px 4px;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 0;
+}
+
+.notif-page-header .screen-title {
+  margin-bottom: 0;
+}
+
+.notif-header-spacer {
+  width: 22px;
+  height: 22px;
 }
 
 .helo {
@@ -759,10 +976,16 @@ html[data-theme="dark"] .toast {
 .back-btn {
   border: none;
   background: transparent;
-  font-size: 20px;
+  color: var(--color-primary);
+  font-size: 22px;
   cursor: pointer;
-  padding-top: 40px;
-
+  padding: 0;
+  line-height: 1;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .notif-error {
@@ -776,43 +999,104 @@ html[data-theme="dark"] .toast {
 }
 
 .notif-list {
-  padding: 12px 0;
+  padding: 12px 0 24px;
   display: flex;
   flex-direction: column;
-  align-items: center;      /* centers each notif-item horizontally */
-  gap: 10px;
+  align-items: stretch;
+  gap: 14px;
   width: 100%;
-  max-width: 400px;         /* keeps items from stretching too wide */
-  margin: 0 auto;           /* centers the whole list block on the page */
-}
-
-.notif-item {
-  width: 100%;              /* items fill the centered container */
-  border: 1px solid #cfe3fb;
-  background: #eaf3ff;
-  border-radius: 8px;
-  padding: 10px 12px;
-  text-align: center;       /* centers the text inside each item */
-}
-
-.notif-title {
-  font-size: 13px;
-  font-weight: 600;
-  margin: 0 0 2px;
-}
-
-.notif-body {
-  font-size: 12px;
-  color: #666;
+  max-width: 100%;
   margin: 0;
 }
 
+.notif-date-heading {
+  font-size: 16px;
+  font-weight: 800;
+  margin: 8px 0 4px;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.notif-item {
+  width: 100%;
+  border: 1px solid rgba(186, 189, 206, 0.2);
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 18px 16px;
+  text-align: left;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.notif-item:hover {
+  transform: translateY(-1px);
+}
+
+.notif-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.notif-item-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.notif-item-title-group h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.notif-unread-dot {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.notif-time {
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.notif-body {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
 .notif-empty {
-  position: absolute;
-  font-size: 13px;
-  color: #888;
+  position: relative;
+  top: auto;
+  right: auto;
+  transform: none;
+  font-size: 14px;
+  color: var(--color-text-secondary);
   text-align: center;
-  padding: 20px 0;
-  top: 50%;
-  transform: translateY(-20%);
+  padding: 24px 16px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: red;
+  color: var(--color-text-primary);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

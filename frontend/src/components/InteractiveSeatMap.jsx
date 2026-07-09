@@ -195,8 +195,9 @@ export default function InteractiveSeatMap({
       {/* ── Map canvas ── */}
       <div
         ref={containerRef}
+        className="interactive-seat-map"
         style={{
-          position: 'relative', width: '100%', height: 520,
+          position: 'relative', width: '100%', height: 640,
           overflow: 'hidden', borderRadius: 20,
           background: 'var(--map-bg)',
           border:  '1.5px solid #5a6a80',

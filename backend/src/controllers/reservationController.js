@@ -27,11 +27,10 @@ exports.quickRandomReserve = async (req, res) => {
 
 exports.checkStatus = async (req, res) => {
   try {
-    console.log("Checking status for user:", req.user?.userId);
     const reservations = await Reservation.activeReservationCount(req.user.userId);
     res.json({ hasActive: reservations.length > 0 });
   } catch (err) {
-    console.error("DEBUG:", err);
+    console.error(err);
     res.status(500).json({ error: 'Failed to fetch status' });
   }
 };
@@ -68,6 +67,14 @@ async function createReservation(userId, seatId) {
     outcome: 'Pending',
   });
   await Seat.updateStatus(seatId, 'occupied');
+
+  // Notify the student that their reservation was created successfully
+  await Notification.create({
+    recipientId: userId,
+    title: 'Reservation successful',
+    messageBody: `Your seat has been reserved Seat ${seatId}. Please check in within 30 minutes or it will be automatically cancelled.`,
+  });
+
   return reservationId;
 }
 
@@ -106,6 +113,12 @@ exports.cancelReservation = async (req, res) => {
     await Seat.updateStatus(reservation.seat_id, 'available');
     await Reservation.updateOutcome(reservationId, 'Inactive');
 
+    await Notification.create({
+      recipientId: reservation.user_id,
+      title: 'Reservation cancelled',
+      messageBody: `Your reservation for Seat ${reservation.seat_id} has been cancelled.`,
+    });
+
     res.json({ message: 'Reservation cancelled' });
   } catch (err) {
     console.error('Cancellation Crash:', err);
@@ -119,7 +132,7 @@ exports.checkInReservation = async (req, res) => {
     const reservation = await Reservation.findById(reservationId);
     if (!reservation) return res.status(404).json({ error: 'Reservation not found' });
 
-    if (reservation.status === 'Active') {
+    if (reservation.outcome === 'Active') {
       return res.json({ message: 'Reservation already active', reservation });
     }
 
@@ -130,7 +143,7 @@ exports.checkInReservation = async (req, res) => {
       messageBody: 'Your reservation has been confirmed by the library manager.',
     });
 
-    res.json({ message: 'Reservation checked in', reservation: { ...reservation, status: 'active', actual_check_in: new Date() } });
+    res.json({ message: 'Reservation checked in', reservation: { ...reservation, outcome: 'Active', check_in_time: new Date() } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to check in reservation' });
@@ -169,9 +182,6 @@ exports.listAll = async (req, res) => {
 };
 
 // ── Manager: recent reservation history for a single student ──────
-// Returns the last 10 reservations for the given user, whether or not
-// they ever checked in. Used by ManagerStudents.jsx when a manager
-// clicks into a student to see their history and how long each visit lasted.
 exports.studentHistory = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -235,17 +245,10 @@ exports.triggerNoShowPenalty = async (req, res) => {
     if (!reservation) return res.status(404).json({ error: 'Reservation not found' });
 
     await Seat.updateStatus(reservation.seat_id, 'available');
-    await Reservation.archive({
-      userId: reservation.user_id,
-      seatId: reservation.seat_id,
-      reservationDate: reservation.scheduled_start,
-      endTime: new Date(),
-      outcome: 'no_show',
-    });
-    await Reservation.delete(reservationId);
+    await Reservation.finalizeReservation(reservationId, new Date(), 'Inactive');
 
     await PenaltyRecord.create({ userId: reservation.user_id, violationType: 'NO_SHOW' });
-    await User.adjustPenaltyScore(reservation.user_id, 10);
+    await User.adjustPenaltyScore(reservation.user_id, -10);
 
     await Notification.create({
       recipientId: reservation.user_id,
@@ -285,14 +288,7 @@ exports.approveCheckout = async (req, res) => {
     if (!reservation) return res.status(404).json({ error: 'Reservation not found' });
 
     await Seat.updateStatus(reservation.seat_id, 'available');
-    await Reservation.archive({
-      userId: reservation.user_id,
-      seatId: reservation.seat_id,
-      reservationDate: reservation.scheduled_start,
-      endTime: new Date(),
-      outcome: 'completed',
-    });
-    await Reservation.delete(reservationId);
+    await Reservation.finalizeReservation(reservationId, new Date(), 'Inactive');
 
     await Notification.create({
       recipientId: reservation.user_id,
@@ -314,20 +310,15 @@ exports.approveCheckout = async (req, res) => {
 // ════════════════════════════════════════════════════════════════════════════
 
 // ── QR Scan: Check-In (Pending → Active) ─────────────────────────────────────
-// Expiry is validated server-side against the reservation's own start_time.
-// The client-supplied expiresAt field in the QR is NOT trusted for security —
-// we recompute the deadline from the DB record so it cannot be spoofed.
 exports.scanCheckIn = async (req, res) => {
   try {
     const { reservationId } = req.body;
 
-    // 1. Fetch the reservation
     const reservation = await Reservation.findById(reservationId);
     if (!reservation) {
       return res.status(404).json({ error: 'Reservation not found.' });
     }
 
-    // 2. Guard: must be Pending to check in
     if (reservation.outcome === 'Active') {
       return res.status(409).json({ error: 'Student is already checked in.' });
     }
@@ -337,21 +328,17 @@ exports.scanCheckIn = async (req, res) => {
       });
     }
 
-    // 3. Validate the 30-minute window using the DB start_time (not client data)
     const NO_SHOW_WINDOW_MS = 30 * 60 * 1000;
     const startTime = reservation.start_time || reservation.reservation_date;
     const deadline = new Date(new Date(startTime).getTime() + NO_SHOW_WINDOW_MS);
     if (new Date() > deadline) {
-      // The cron job will clean this up shortly; surface a clear message now
       return res.status(410).json({
         error: 'The 30-minute check-in window has passed. This reservation will be cancelled automatically.',
       });
     }
 
-    // 4. Set check-in time & flip outcome to Active
     await Reservation.setCheckIn(reservationId, new Date());
 
-    // 5. Notify student
     await Notification.create({
       recipientId: reservation.user_id,
       title: 'Checked in!',
@@ -370,18 +357,15 @@ exports.scanCheckIn = async (req, res) => {
 };
 
 // ── QR Scan: Check-Out (Active → Inactive) ───────────────────────────────────
-// No expiry — students can check out whenever they're done.
 exports.scanCheckOut = async (req, res) => {
   try {
     const { reservationId } = req.body;
 
-    // 1. Fetch the reservation
     const reservation = await Reservation.findById(reservationId);
     if (!reservation) {
       return res.status(404).json({ error: 'Reservation not found.' });
     }
 
-    // 2. Guard: must be Active to check out
     if (reservation.outcome === 'Inactive') {
       return res.status(409).json({ error: 'Student is already checked out.' });
     }
@@ -391,11 +375,9 @@ exports.scanCheckOut = async (req, res) => {
       });
     }
 
-    // 3. Finalise: set end_time, flip outcome to Inactive, free the seat
     await Reservation.finalizeReservation(reservationId, new Date(), 'Inactive');
     await Seat.updateStatus(reservation.seat_id, 'available');
 
-    // 4. Notify student
     await Notification.create({
       recipientId: reservation.user_id,
       title: 'Checked out!',

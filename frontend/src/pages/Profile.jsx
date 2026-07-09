@@ -102,7 +102,7 @@ export default function Profile() {
 
         {/* Name — inline edit */}
         {editingName ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginTop: 4 }}>
+          <div className="profile-edit-container" style={{ marginTop: 4 }}>
             <input
               type="text"
               value={nameValue}
@@ -115,31 +115,13 @@ export default function Profile() {
                 borderRadius: 8, padding: '6px 14px',
                 color: 'var(--color-text-primary)',
                 background: 'var(--color-surface)',
-                outline: 'none', width: 220,
+                outline: 'none', width: '100%', maxWidth: 320,
               }}
             />
             {nameError && <p style={{ color: 'var(--color-danger)', fontSize: 12 }}>{nameError}</p>}
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button
-                onClick={handleSaveName}
-                disabled={nameLoading}
-                style={{
-                  padding: '6px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-                  background: 'var(--color-primary)',
-                  cursor: nameLoading ? 'not-allowed' : 'pointer', opacity: nameLoading ? 0.6 : 1,
-                }}
-              >
-                {nameLoading ? 'Saving…' : 'Save'}
-              </button>
-              <button
-                onClick={() => setEditingName(false)}
-                style={{
-                  padding: '6px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-                  background: 'var(--color-border)', color: 'var(--color-text-secondary)', cursor: 'pointer',
-                }}
-              >
-                Cancel
-              </button>
+            <div className="profile-actions">
+              <Button onClick={handleSaveName} loading={nameLoading}>{nameLoading ? 'Saving…' : 'Save'}</Button>
+              <Button variant="outline" onClick={() => setEditingName(false)}>Cancel</Button>
             </div>
           </div>
         ) : (
@@ -158,7 +140,7 @@ export default function Profile() {
         <p className="text-muted" style={{ fontSize: 14, marginTop: 2 }}>{user?.email}</p>
       </div>
 
-      <div className='card mt-16'>
+      <div className='card profile-card mt-16' style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', marginLeft: 'auto' }}>
         {/* ── Change password ── */}
         <div style={{ alignItems: 'center', padding: '0px 0 8px 0' }}>
           <div className="flex-between" style={{ cursor: 'pointer' }}
@@ -229,7 +211,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <div style={{ border: '1px solid', marginTop: '32px', borderRadius: '16px', color: '#b7b7b7ad' }}>
+      <div className="profile-logout mt-16" style={{ margin: 'auto'}}>
         <button onClick={handleLogout} className="logout-button">Log out</button>
       </div>
 

@@ -73,7 +73,7 @@ static async getManagementIssues() {
     `SELECT f.*, u.full_name 
      FROM Feedback f 
      LEFT JOIN User u ON f.user_id = u.user_id 
-     WHERE f.sentiment = 'Management_issue' 
+     WHERE f.sentiment = 'management_issue' 
        AND f.created_at >= NOW() - INTERVAL 30 DAY -- 🟢 Only pulls last 30 days
      ORDER BY f.created_at DESC`
   );

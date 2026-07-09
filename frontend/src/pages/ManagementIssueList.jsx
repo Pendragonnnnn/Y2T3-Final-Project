@@ -7,10 +7,36 @@ export default function ManagementIssuesList() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const SENTIMENT_COLORS = {
+    bug: '#E74C3C',
+    feature_request: '#4095F6',
+    management_issue: '#F5A623',
+    general: '#A0AAC2',
+  };
+
+  const SENTIMENT_LABELS = {
+    bug: 'Bug Report',
+    feature_request: 'Feature Request',
+    management_issue: 'Management Issue',
+    general: 'General Comment',
+  };
+
+  const getTimeAgo = (date) => {
+    const now = new Date();
+    const feedbackDate = new Date(date);
+    const seconds = Math.floor((now - feedbackDate) / 1000);
+
+    if (seconds < 60) return 'just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+    return `${Math.floor(seconds / 604800)}w ago`;
+  };
+
   useEffect(() => {
-    // Call the new backend endpoint created in Step 1
-    api.get('/manager/feedback/management-issues')
-      .then(({ data }) => setIssues(data))
+    // Call the feedback endpoint to get all feedback submitted by users
+    api.get('/feedback')
+      .then(({ data }) => setIssues(data.feedback || data))
       .finally(() => setLoading(false));
   }, []);
 
@@ -25,7 +51,7 @@ export default function ManagementIssuesList() {
             fontSize: 22,
             cursor: 'pointer',
             padding: 0,
-            lineHeight: 1,
+            lineHeight: 2,
             alignSelf: 'flex-start',
             color: 'var(--color-primary)',
           }}
@@ -46,22 +72,36 @@ export default function ManagementIssuesList() {
       {loading ? (
         <div className="text-center mt-24"><div className="spinner" style={{ margin: '0 auto' }} /></div>
       ) : issues.length === 0 ? (
-        <p className="text-muted text-center mt-12">No management issues found.</p>
+        <p className="text-muted text-center mt-12">No feedback submitted yet.</p>
       ) : (
         <div className="flex flex-col gap-4">
           {issues.map(issue => (
-            <div key={issue.feedback_id} className="card border-l-4 border-yellow-500">
-              <div className="mb-2" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <div className="font-semibold">{issue.full_name || 'Anonymous User'}</div>
-                <div className="text-xs text-muted">
-                  {new Date(issue.created_at).toLocaleDateString()}
+            <div key={issue.feedback_id} className="card" style={{ borderLeft: `4px solid ${SENTIMENT_COLORS[issue.sentiment] || '#A0AAC2'}` }}>
+              <div className="mb-2" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: '10px', alignItems: 'center' }}>
+                  <div className="font-semibold">{issue.full_name || 'Anonymous User'}</div>
+                  <div style={{ 
+                    fontSize: '11px', 
+                    fontWeight: 600, 
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    backgroundColor: SENTIMENT_COLORS[issue.sentiment] || '#A0AAC2',
+                    color: 'white',
+                   
+                    display: 'inline-block'
+                  }}>
+                    {SENTIMENT_LABELS[issue.sentiment] || issue.sentiment}
+                  </div>
+                </div>
+                <div className="text-xs text-muted" style={{ textAlign: 'right' }}>
+                  {getTimeAgo(issue.created_at)}
                 </div>
               </div>
-              <div className="flex items-center mb-2">
-                <span className="text-yellow-500 mr-2">{'★'.repeat(issue.star_rating)}</span>
-                <span className="text-gray-300">{'★'.repeat(5 - issue.star_rating)}</span>
+              <div className="flex items-center mb-2" style={{ marginTop: '8px' }}>
+                <span style={{ color: SENTIMENT_COLORS[issue.sentiment] || '#F5A623' }}>{'★'.repeat(issue.star_rating)}</span>
+                <span style={{ color: '#ddd' }}>{'★'.repeat(5 - issue.star_rating)}</span>
               </div>
-              <p className="text-sm text-gray-700">{issue.comment}</p>
+              <p className="text-sm" style={{ color: 'var(--color-text-primary)', marginTop: '8px' }}>{issue.comment}</p>
             </div>
           ))}
         </div>

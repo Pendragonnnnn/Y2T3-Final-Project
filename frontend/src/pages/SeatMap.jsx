@@ -107,20 +107,20 @@ export default function SeatMap() {
       )}
     
       {selected && (
-      <div className="card mt-16" style={{ position: 'sticky', bottom: -20, paddingLeft: '0px' ,paddingTop: '6px', display: 'flex', flexDirection: 'row', gap: '10px', backgroundColor: 'var(--color-bg)'}}>
+      <div className="profile-card mt-16" style={{ borderRadius: '16px', position: 'sticky', bottom: -18, paddingBottom: '10px' ,padding: '14px', display: 'flex', flexDirection: 'row', gap: '10px', backgroundColor: 'var(--color-bg)'}}>
         {/* Close Button */}
         <p style={{ fontWeight: '200' }}></p>
         <Button 
           onClick={handleReserve} 
           loading={reserving} 
           disabled={hasActive || !selected} 
-          className="mt-8"
+          className=" desktop-action-btn"
         > 
           {hasActive ? 'Reservation Limit Reached' : 'Reserve this seat'}
         </Button>
         <button 
           onClick={() => setSelected(null)} 
-          className='mt-8 cancel-action-btn'
+          className= 'cancel-action-btn'
           aria-label="Close"
           
         >

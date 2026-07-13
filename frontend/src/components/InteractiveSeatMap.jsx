@@ -34,9 +34,13 @@ function groupSeats(seats) {
 
 function getPanBounds(scale, cW, cH) {
   const sW = SCENE_WIDTH * scale, sH = SCENE_HEIGHT * scale;
+  const centerX = (cW - sW) / 2;
+  const centerY = (cH - sH) / 2;
   return {
-    minX: Math.min(0, cW - sW), maxX: Math.max(0, cW - sW),
-    minY: Math.min(0, cH - sH), maxY: Math.max(0, cH - sH),
+    minX: sW <= cW ? centerX : cW - sW,
+    maxX: sW <= cW ? centerX : 0,
+    minY: sH <= cH ? centerY : cH - sH,
+    maxY: sH <= cH ? centerY : 0,
   };
 }
 

@@ -133,7 +133,7 @@ export default function ManagerReport() {
               display: 'flex', 
               justifyContent: 'space-between', 
               alignItems: 'flex-end', 
-              height: '140px', 
+              height: '368px', 
               paddingTop: '20px',
               borderBottom: '1px solid var(--color-border)'
             }}
@@ -151,7 +151,7 @@ export default function ManagerReport() {
                     <span style={{ fontSize: '10px', color: 'var(--color-text-primary)', fontWeight: '600', marginBottom: '4px' }}>
                       {item.count}
                     </span>
-                    <div style={{ width: '65%', height: barHeight, backgroundColor: '#4095F6', borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '8px', flexShrink: 0 }} title={`${item.count} reservations at ${displayHour}`} />
+                    <div style={{ width: '40%', height: barHeight, backgroundColor: '#4095F6', borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '8px', flexShrink: 0 }} title={`${item.count} reservations at ${displayHour}`} />
                     <span className="text-muted" style={{ fontSize: '10px', marginTop: '8px', whiteSpace: 'nowrap' }}>
                       {displayHour}
                     </span>

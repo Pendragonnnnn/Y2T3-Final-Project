@@ -165,7 +165,7 @@ const fetchUnreadCount = useCallback(async () => {
       
 
       {/* Seat stats card — Mobile 2 style with two stat pills */}
-      <div style={{ display: 'flex', gap: '64px', alignItems: 'center'}}>
+      <div style={{ display: 'flex', gap: '4px', alignItems: 'center'}}>
       <div className="home-card mt-8" style={{ background: 'linear-gradient(270deg, var(--color-primary), var(--color-primary-light))', padding: 20  }}>
         <p style={{ color: 'white', fontSize: 14, paddingBottom: 10 }}>Seats available right now</p>
         {loading ? (
@@ -190,7 +190,7 @@ const fetchUnreadCount = useCallback(async () => {
         )}
       </div>
 
-        <div className="card1-desktop" style={{ flexGrow: ''  }}>
+        <div className="card1-desktop" style={{ flexGrow: '0.8'  }}>
         <div className="card-header">
           <h2 className="card-title">Peak Booking Hours </h2>
         </div>

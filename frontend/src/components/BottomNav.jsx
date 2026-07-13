@@ -41,7 +41,7 @@ export default function BottomNav() {
 
       {/* Logout button for desktop sidebar */}
       <div className="logout-item" role="button" tabIndex={0} onClick={handleLogout} onKeyDown={e => { if (e.key === 'Enter') handleLogout(); }}>
-        <span className="nav-icon">⎋</span>
+        <span className="nav-icon">]➜</span>
         <span>Log out</span>
       </div>
     </nav>

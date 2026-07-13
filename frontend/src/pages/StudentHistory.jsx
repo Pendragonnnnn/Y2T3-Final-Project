@@ -51,10 +51,15 @@ export default function StudentHistory() {
 
         <h2 className="screen-title">Reservation History</h2>
 
-        <div style={{ width: 22 }} />
-
+        <div style={{ width: 22 }} /> 
+          
       </div>
-
+      <div>
+          <p style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+          Past 10 reservations
+        </p>
+      </div>
+          
       {loading ? (
         <div className="text-center mt-24"><div className="spinner" style={{ margin: '0 auto' }} /></div>
       ) : (

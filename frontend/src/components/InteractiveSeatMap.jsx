@@ -60,6 +60,8 @@ const STUDENT_SEAT_CONFIG = {
   available: { bg: '#dcfce7', border: '#16a34a', color: '#15803d' },
   occupied:  { bg: '#fee2e2', border: '#dc2626', color: '#b91c1c' },
   blocked:   { bg: '#f1f5f9', border: '#94a3b8', color: '#64748b' },
+  pending:   { bg: '#e6f2ff', border: '#3b82f6', color: '#1e40af' },
+  active:    { bg: '#dbeafe', border: '#2563eb', color: '#1e3a8a' },
 };
 
 // Manager-mode palette (dark, utilitarian)
@@ -67,6 +69,8 @@ const MANAGER_SEAT_CONFIG = {
   available: { bg: 'rgba(34,197,94,0.15)',  border: '#22c55e', color: '#4ade80' },
   occupied:  { bg: 'rgba(251,146,60,0.18)', border: '#f97316', color: '#fb923c' },
   blocked:   { bg: 'rgba(100,116,139,0.2)', border: '#475569', color: '#94a3b8' },
+  pending:   { bg: 'rgba(59,130,246,0.12)', border: '#3b82f6', color: '#60a5fa' },
+  active:    { bg: 'rgba(37,99,235,0.12)', border: '#2563eb', color: '#3b82f6' },
 };
 
 /**

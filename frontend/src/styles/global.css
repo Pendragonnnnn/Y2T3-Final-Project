@@ -330,10 +330,7 @@ a { text-decoration: none; color: inherit; }
   border: 1px solid var(--color-border);
 
 }
-.card:hover {
-  box-shadow: var(--shadow-elevated);
-  transform: translateY(-2px);
-}
+
 /* ── Form inputs ── */
 .field {
   margin-bottom: 16px;

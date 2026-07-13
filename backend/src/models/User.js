@@ -13,12 +13,6 @@ class User {
       'INSERT INTO user (email, password, full_name, role) VALUES (?, ?, ?, ?)',
       [email, password, fullName, toDbRole(role)]
     );
-    if (toDbRole(role) === 'Student') {
-      await db.query(
-        'INSERT INTO student_profile (user_id, current_penalty_score) VALUES (?, 100)',
-        [result.insertId]
-      );
-    }
     return result.insertId;
   }
 
@@ -29,10 +23,8 @@ class User {
 
   static async findById(userId) {
     const [rows] = await db.query(
-      `SELECT u.user_id, u.email, u.full_name, u.role, 
-              sp.current_penalty_score
+      `SELECT u.user_id, u.email, u.full_name, u.role
        FROM user u
-       LEFT JOIN student_profile sp ON sp.user_id = u.user_id
        WHERE u.user_id = ?`,
       [userId]
     );
@@ -41,21 +33,15 @@ class User {
 
   static async listStudents() {
     const [rows] = await db.query(
-      `SELECT u.user_id, u.email, u.full_name, sp.current_penalty_score
+      `SELECT u.user_id, u.email, u.full_name
        FROM user u
-       JOIN student_profile sp ON sp.user_id = u.user_id
        WHERE u.role = 'Student'
        ORDER BY u.full_name`
     );
     return rows;
   }
 
-  static async adjustPenaltyScore(userId, delta) {
-    await db.query(
-      'UPDATE student_profile SET current_penalty_score = GREATEST(0, current_penalty_score + ?) WHERE user_id = ?',
-      [delta, userId]
-    );
-  }
+  
 
   /**
    * Returns the stored password value for a given user.

@@ -2,7 +2,7 @@
  * Seeds initial demo accounts.
  * Run with: npm run seed
  */
-const db = require('../src/config/db');
+const db = require('../backend/src/config/db');
 
 async function ensureLibraryTable(label) {
   const [rows] = await db.query('SELECT table_id FROM library_table WHERE table_label = ?', [label]);

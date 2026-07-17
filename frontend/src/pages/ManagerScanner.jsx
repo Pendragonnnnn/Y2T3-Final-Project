@@ -24,8 +24,7 @@ export default function ManagerScanner() {
   const { message, showToast } = useToast();
   const [inputVal, setInputVal] = useState('');
   const [loading, setLoading] = useState(false);
-  const [lastScan, setLastScan] = useState(null); // { type, seatId, studentName, timestamp }
-
+  const [lastScan, setLastScan] = useState(null);
   const inputRef = useRef(null);
 
   // Keep the field permanently focused so the USB gun fires straight into it
@@ -77,10 +76,11 @@ export default function ManagerScanner() {
       });
 
       showToast(`${action.icon} ${action.successLabel}`);
-    } catch (err) { 
+
+    } catch (err) {
       const errMsg =
-        err.response?.data?.error || // backend validation error
-        err.message ||               // our own thrown error
+        err.response?.data?.error ||
+        err.message ||
         'Something went wrong. Please try again.';
 
       setLastScan({
@@ -98,130 +98,68 @@ export default function ManagerScanner() {
   };
 
   return (
-    <div className="screen" style={{ padding: 16 }}>
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div className="faq-screen-header">
-        <div>
-          <p className="text-muted">Scanner Station</p>
-          <h2 className="screen-title">Scan Student QR</h2>
-        </div>
-        <Button variant="outline" size="sm" onClick={() => navigate('/manager/dashboard')}>
-          ← Dashboard
-        </Button>
-      </div>
-
-      {/* ── Scanner input card ─────────────────────────────────────────────── */}
-      <div
-        className="card"
-        style={{ maxWidth: 420, margin: '24px auto 0', padding: 28, textAlign: 'center' }}
-      >
-        {/* Pulsing ring to indicate "ready" */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: '50%',
-              background: loading
-                ? '#FFF4E0'
-                : 'linear-gradient(135deg, #E8F8EE 0%, #d1f2e2 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 32,
-              boxShadow: loading
-                ? '0 0 0 8px rgba(245,166,35,0.15)'
-                : '0 0 0 8px rgba(46,204,113,0.12)',
-              transition: 'all 0.3s ease',
-            }}
-          >
-            {loading ? '⏳' : '📷'}
+    <div className="scanner-container">
+      <div className="scanner-card">
+        {/* ── Header ── */}
+        <div className="scanner-header">
+          <div>
+            <p className="text-muted">Scanner Station</p>
+            <h2 className="scanner-title">Scan Student QR</h2>
           </div>
+          <Button variant="outline" size="sm" onClick={() => navigate('/manager')}>
+            ← Dashboard
+          </Button>
         </div>
 
-        <p style={{ fontWeight: 600, marginBottom: 6, color: 'var(--color-text-primary)' }}>
-          {loading ? 'Processing…' : 'Ready to scan'}
-        </p>
-        <p className="text-muted" style={{ marginBottom: 20, fontSize: 13, lineHeight: 1.5 }}>
-          Point the USB scanner at a student's QR code.
-          <br />
-          Works for both <strong>check-in</strong> and <strong>check-out</strong>.
-        </p>
-
-        {/* Hidden-ish input that catches all scanner keystrokes */}
-        <form onSubmit={handleScanSubmit}>
-          <input
-            ref={inputRef}
-            type="text"
-            value={inputVal}
-            onChange={(e) => setInputVal(e.target.value)}
-            placeholder={loading ? 'Processing…' : '▸  Waiting for scan…'}
-            disabled={loading}
-            autoComplete="off"
-            style={{
-              padding: '13px 16px',
-              width: '100%',
-              textAlign: 'center',
-              fontSize: 15,
-              fontFamily: 'var(--font-body)',
-              border: `2px solid ${loading ? 'var(--color-warning)' : 'var(--color-border)'}`,
-              borderRadius: 'var(--radius-sm)',
-              background: loading ? '#FFFBF2' : '#FAFBFD',
-              color: '#1A2238',
-              outline: 'none',
-              transition: 'border-color 0.2s ease',
-            }}
-          />
-        </form>
-      </div>
-
-      {/* ── Last scan result card ──────────────────────────────────────────── */}
-      {lastScan && (
-        <div
-          className="card"
-          style={{
-            maxWidth: 420,
-            marginTop: 16,
-            marginRight: 'auto',
-            marginBottom: 0,
-            marginLeft: 'auto',
-            paddingTop: 20,
-            paddingRight: 24,
-            paddingBottom: 20,
-            paddingLeft: 24,
-            borderLeftWidth: 4,
-            borderLeftStyle: 'solid',
-            borderLeftColor: lastScan.outcome === 'success' ? 'var(--color-success)' : 'var(--color-danger)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <span style={{ fontSize: 28, lineHeight: 1 }}>{lastScan.icon}</span>
-            <div style={{ flex: 1 }}>
-              <p style={{ fontWeight: 700, color: 'var(--color-text-primary)', margin: 0 }}>
-                {lastScan.message}
-              </p>
+        {/* ── Scanner input card ── */}
+        <div className="scanner-content">
+          {/* Pulsing ring to indicate "ready" */}
+          <div className="scanner-icon-wrapper">
+            <div className={`scanner-icon ${loading ? 'loading' : ''}`}>
+              {loading ? '⏳' : '📷'}
             </div>
-            <span style={{ fontSize: 12, color: 'var(--color-text-tertiary)', whiteSpace: 'nowrap' }}>
-              {lastScan.timestamp}
-            </span>
           </div>
-        </div>
-      )}
 
-      {/* ── Legend ────────────────────────────────────────────────────────── */}
-      <div
-        style={{
-          maxWidth: 420,
-          margin: '20px auto 0',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 10,
-        }}
-      >
-        
+          <p className="scanner-status">
+            {loading ? 'Processing...' : 'Ready to scan'}
+          </p>
+
+          <p className="scanner-description">
+            Point the USB scanner at a student's QR code.
+            <br />
+            Works for both <strong>check-in</strong> and <strong>check-out</strong>.
+          </p>
+
+          {/* Hidden-ish input that catches all scanner keystrokes */}
+          <form onSubmit={handleScanSubmit} className="scanner-form">
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
+              placeholder={loading ? 'Processing...' : '▸ Waiting for scan...'}
+              disabled={loading}
+              autoComplete="off"
+              className="scanner-input"
+            />
+          </form>
+        </div>
+
+        {/* ── Last scan result card ── */}
+        {lastScan && (
+          <div className={`scan-result ${lastScan.outcome}`}>
+            <div className="scan-result-content">
+              <span className="scan-result-icon">{lastScan.icon}</span>
+              <div className="scan-result-message">
+                <p>{lastScan.message}</p>
+              </div>
+              <span className="scan-result-time">{lastScan.timestamp}</span>
+            </div>
+          </div>
+        )}
       </div>
 
-      
+      <Toast message={message} />
     </div>
   );
 }

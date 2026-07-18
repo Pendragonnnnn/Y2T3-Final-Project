@@ -1,31 +1,6 @@
-# 🏛️ Smart Library Seat Reservation System
+#  Smart Library Seat Reservation System
 
-A full-stack library management system that allows students to reserve seats in real-time, with manager oversight and AI-powered feedback classification.
-
-[![Node.js](https://img.shields.io/badge/Node.js-18.x-green.svg)](https://nodejs.org/)
-[![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0-orange.svg)](https://mysql.com/)
-[![Express](https://img.shields.io/badge/Express-4.x-lightgrey.svg)](https://expressjs.com/)
-[![JWT](https://img.shields.io/badge/JWT-Auth-red.svg)](https://jwt.io/)
-[![Vite](https://img.shields.io/badge/Vite-4.x-purple.svg)](https://vitejs.dev/)
-
----
-
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Technologies](#technologies)
-- [System Architecture](#system-architecture)
-- [Database Schema](#database-schema)
-- [Installation & Setup](#installation--setup)
-- [Demo Accounts](#demo-accounts)
-- [API Documentation](#api-documentation)
-- [Project Structure](#project-structure)
-- [Screenshots](#screenshots)
-- [Contributors](#contributors)
-- [License](#license)
-
+Full-stack MVC web application: **React** (frontend) + **Express** (backend, MVC pattern) + **MySQL** (database). Includes a Logistic Regression-style sentiment classifier for post-checkout student feedback.
 ---
 
 ## 📖 Overview

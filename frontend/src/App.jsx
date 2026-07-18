@@ -46,13 +46,13 @@ export default function App() {
             <Route path="/register" element={<Register />} />
 
             {/* Student routes */}
-            <Route path="/home"           element={<ProtectedRoute allowedRoles={['student']}><Home /></ProtectedRoute>} />
-            <Route path="/map"            element={<ProtectedRoute allowedRoles={['student']}><SeatMap /></ProtectedRoute>} />
-            <Route path="/reservations"   element={<ProtectedRoute allowedRoles={['student']}><MyReservations /></ProtectedRoute>} />
-            <Route path="/profile"        element={<ProtectedRoute allowedRoles={['student', 'manager']}><Profile /></ProtectedRoute>} />
-            <Route path="/feedback"       element={<ProtectedRoute allowedRoles={['student', 'manager']}><Feedback /></ProtectedRoute>} />
-            <Route path="/faq"            element={<ProtectedRoute allowedRoles={['student', 'manager']}><FAQ /></ProtectedRoute>} />
-            <Route path="/notifications"  element={<ProtectedRoute allowedRoles={['student']}><Notification /></ProtectedRoute>} />
+            <Route path="/home"           element={<ProtectedRoute allowedRoles={['student', 'guest']}><Home /></ProtectedRoute>} />
+            <Route path="/map"            element={<ProtectedRoute allowedRoles={['student', 'guest']}><SeatMap /></ProtectedRoute>} />
+            <Route path="/reservations"   element={<ProtectedRoute allowedRoles={['student', 'guest']}><MyReservations /></ProtectedRoute>} />
+            <Route path="/profile"        element={<ProtectedRoute allowedRoles={['student', 'manager', 'guest']}><Profile /></ProtectedRoute>} />
+            <Route path="/feedback"       element={<ProtectedRoute allowedRoles={['student', 'manager', 'guest']}><Feedback /></ProtectedRoute>} />
+            <Route path="/faq"            element={<ProtectedRoute allowedRoles={['student', 'manager', 'guest']}><FAQ /></ProtectedRoute>} />
+            <Route path="/notifications"  element={<ProtectedRoute allowedRoles={['student', 'guest']}><Notification /></ProtectedRoute>} />
 
             {/* Manager routes */}
             <Route path="/manager"          element={<ProtectedRoute allowedRoles={['manager']}><ManagerDashboard /></ProtectedRoute>} />

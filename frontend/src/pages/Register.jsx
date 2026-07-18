@@ -1,9 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Button from '../components/Button';
-import closeEye from "../assets/closeEye.png";
-import openEye from "../assets/open_eye.png";
 
 export default function Register() {
   const { register } = useAuth();
@@ -12,6 +9,25 @@ export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    setDarkMode(isDark);
+
+    const observer = new MutationObserver(() => {
+      const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+      setDarkMode(isDarkNow);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
   const handleSubmit = async (e) => {
@@ -29,70 +45,142 @@ export default function Register() {
   };
 
   return (
-    <div className="screen" style={{ justifyContent: 'center' }}>
-      <div className="screen-header">
-        <h2 className="screen-title">Create account</h2>
+    <div className="register-wrapper">
+      {/* ── MOBILE VIEW ── */}
+      <div className="register-mobile">
+        <div className="register-header">
+          <h2 className="register-title">Create account</h2>
+        </div>
+
+        <form onSubmit={handleSubmit} className="register-form">
+          <div className="register-field">
+            <label>Full name</label>
+            <input 
+              value={form.fullName} 
+              onChange={update('fullName')} 
+              required 
+              placeholder="e.g. Miguel Santos" 
+            />
+          </div>
+
+          <div className="register-field">
+            <label>Email</label>
+            <input 
+              type="email" 
+              value={form.email} 
+              onChange={update('email')} 
+              required 
+              placeholder="you@university.edu" 
+            />
+          </div>
+
+          <div className="register-field">
+            <label>Password</label>
+            <div className="register-password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={update("password")}
+                placeholder="Password"
+                required
+                minLength={6}
+              />
+              <button
+                type="button"
+                className="register-password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+              </button>
+            </div>
+          </div>
+
+          <div className="register-field">
+            <label>Role</label>
+            <select value={form.role} onChange={update('role')}>
+              <option value="student">Student</option>
+            </select>
+          </div>
+
+          {error && <p className="register-error">{error}</p>}
+
+          <button type="submit" className="register-submit-btn" disabled={loading}>
+            {loading ? <span className="spinner" /> : 'Sign up'}
+          </button>
+        </form>
+
+        <p className="register-footer">
+          Already have an account? <Link to="/login">Log in</Link>
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="stack">
-        <div className="field">
-          <label>Full name</label>
-          <input value={form.fullName} onChange={update('fullName')} required placeholder="e.g. Miguel Santos" />
+      {/* ── DESKTOP/TABLET VIEW ── */}
+      <div className="register-desktop">
+        <div className="register-card">
+          <div className="register-header-desktop">
+            <h2 className="register-title-desktop">Create account</h2>
+          </div>
+
+          <form onSubmit={handleSubmit} className="register-form-desktop">
+            <div className="register-field-desktop">
+              <label>Full name</label>
+              <input 
+                value={form.fullName} 
+                onChange={update('fullName')} 
+                required 
+                placeholder="e.g. Miguel Santos" 
+              />
+            </div>
+
+            <div className="register-field-desktop">
+              <label>Email</label>
+              <input 
+                type="email" 
+                value={form.email} 
+                onChange={update('email')} 
+                required 
+                placeholder="you@university.edu" 
+              />
+            </div>
+
+            <div className="register-field-desktop">
+              <label>Password</label>
+              <div className="register-password-wrapper-desktop">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={update("password")}
+                  placeholder="Password"
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  className="register-password-toggle-desktop"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                </button>
+              </div>
+            </div>
+
+            <div className="register-field-desktop">
+              <label>Role</label>
+              <select value={form.role} onChange={update('role')}>
+                <option value="student">Student</option>
+              </select>
+            </div>
+
+            {error && <p className="register-error-desktop">{error}</p>}
+
+            <button type="submit" className="register-submit-btn-desktop" disabled={loading}>
+              {loading ? <span className="spinner" /> : 'Sign up'}
+            </button>
+          </form>
+
+          <p className="register-footer-desktop">
+            Already have an account? <Link to="/login">Log in</Link>
+          </p>
         </div>
-        <div className="field">
-          <label>Email</label>
-          <input type="email" value={form.email} onChange={update('email')} required placeholder="you@student.edu" />
-        </div>
-        <div
-  className="field"
-  style={{ position: "relative" }}
->
-  <label>Password</label>
-
-  <input
-    type={showPassword ? "text" : "password"}
-    value={form.password}
-    onChange={update("password")}
-    placeholder="Password"
-    required
-    minLength={6}
-    style={{
-      width: "100%",
-      paddingRight: "45px",
-    }}
-  />
-
-  <img
-    src={showPassword ? openEye : closeEye}
-    alt="Toggle Password"
-    onClick={() => setShowPassword(!showPassword)}
-    style={{
-      position: "absolute",
-      right: "15px",
-      top: "70%",
-      transform: "translateY(-50%)",
-      width: 20,
-      height: 20,
-      cursor: "pointer",
-    }}
-  />
-</div>
-        <div className="field">
-          <label>Role</label>
-          <select value={form.role} onChange={update('role')}>
-            <option value="student">Student</option>
-            <option value="manager">Library Manager</option>
-          </select>
-        </div>
-
-        {error && <p style={{ color: 'var(--color-danger)', fontSize: 13 }}>{error}</p>}
-
-        <Button type="submit" loading={loading}>Sign up</Button>
-      </form>
-
-      <p className="text-center text-muted mt-16">
-        Already have an account? <Link to="/login" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Log in</Link>
-      </p>
+      </div>
     </div>
   );
 }

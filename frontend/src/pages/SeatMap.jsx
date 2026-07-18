@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import BottomNav from '../components/BottomNav';
 import Button from '../components/Button';
 import InteractiveSeatMap from '../components/InteractiveSeatMap';
@@ -10,6 +11,7 @@ import { useToast } from '../components/useToast';
 export default function SeatMap() {
   const navigate = useNavigate();
   const { message, showToast } = useToast();
+  const { user } = useAuth();
   const [seats, setSeats] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,13 +25,19 @@ export default function SeatMap() {
   };
 
   const checkActiveReservation = useCallback(async () => {
+  // Skip reservation limit check for Guest users
+  if (user?.role === 'guest') {
+    setHasActive(false);
+    return;
+  }
+
   try {
     const { data } = await api.get('/reservations/check-status'); // Add this endpoint in your backend
     setHasActive(data.hasActive);
   } catch (err) {
     console.error("Failed to check status", err);
   }
-}, []);
+}, [user]);
 
   useEffect(() => {
   loadSeats();
@@ -79,7 +87,7 @@ export default function SeatMap() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <h2 className="screen-title">Library Map</h2>
         </div>
-        {hasActive && (
+        {hasActive && user?.role !== 'guest' && (
           <div className="alert alert-warning">
             You already have a pending or active reservation.
           </div>

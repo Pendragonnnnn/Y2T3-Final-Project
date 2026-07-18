@@ -114,7 +114,7 @@ export default function MyReservations() {
             const qrValue   = isPending ? getCheckInQr(r) : isActive ? getCheckOutQr(r) : null;
 
             return (
-              <div key={r.reservation_id} className="qr-card" style={{ background: 'var(--qr-code-bg)' }}>
+              <div key={r.reservation_id} className="qr-card" style={{ background: 'var(--qr-code-bg)', marginBottom: 100}}>
 
                 {/* ── Top row ── */}
                 

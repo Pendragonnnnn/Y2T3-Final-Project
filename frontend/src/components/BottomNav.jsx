@@ -19,6 +19,7 @@ const MANAGER_TABS = [
 export default function BottomNav() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
   const tabs = user?.role?.toLowerCase() === 'manager' ? MANAGER_TABS : STUDENT_TABS;
 
   const handleLogout = () => {
@@ -32,15 +33,21 @@ export default function BottomNav() {
         <NavLink
           key={tab.to}
           to={tab.to}
+          end={tab.end || false}
           className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
         >
           <span className="nav-icon">{tab.icon}</span>
           <span>{tab.label}</span>
         </NavLink>
       ))}
-
-      {/* Logout button for desktop sidebar */}
-      <div className="logout-item" role="button" tabIndex={0} onClick={handleLogout} onKeyDown={e => { if (e.key === 'Enter') handleLogout(); }}>
+      
+      <div 
+        className="logout-item" 
+        role="button" 
+        tabIndex={0} 
+        onClick={handleLogout} 
+        onKeyDown={e => { if (e.key === 'Enter') handleLogout(); }}
+      >
         <span className="nav-icon">]➜</span>
         <span>Log out</span>
       </div>

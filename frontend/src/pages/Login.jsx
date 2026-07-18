@@ -1,11 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Button from '../components/Button';
 import s1 from '../assets/s1.png';
-import person from '../assets/person.svg';
-import closeEye from '../assets/closeEye.png';
-import openEye from '../assets/open_eye.png';
+import s3 from '../assets/s3.png';
 
 export default function Login() {
   const { login } = useAuth();
@@ -15,6 +12,24 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    setDarkMode(isDark);
+
+    const observer = new MutationObserver(() => {
+      const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+      setDarkMode(isDarkNow);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,102 +45,142 @@ export default function Login() {
     }
   };
 
+  const logoImage = darkMode ? s3 : s1;
+
   return (
-    <div
-      className="screen"
-      style={{
-        background: 'linear-gradient(160deg,rgba(209, 226, 243, 1) 7%,rgba(204, 222, 241, 1) 10%,rgba(0, 62, 195, 1) 100%',
-        color: 'white',
-        justifyContent: 'center',
-        paddingBottom: 20,
-      }}
-    >
-      <div style={{ textAlign: 'center', marginBottom: 36 }}>
-        
-        <div className='logo-container'>
-          <img src={s1} alt="Logo" className='logo' />
+    <div className="login-wrapper">
+      {/* ── MOBILE VIEW ── */}
+      <div className="login-mobile">
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <div className='logo-container'>
+            <img src={logoImage} alt="Logo" className='logo' />
+          </div>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-text-primary)' }}>Library Seat Finder</h1>
+          <p style={{ opacity: 0.8, fontSize: 13, marginTop: 4, color: 'var(--color-text-secondary)' }}>Reserve your study space in seconds</p>
         </div>
 
-        <h1 style={{ fontSize: 22, fontWeight: 700 }}>Library Seat Finder</h1>
-        <p style={{ opacity: 0.8, fontSize: 13, marginTop: 4 }}>Reserve your study space in seconds</p>
+        <form onSubmit={handleSubmit} className="stack">
+          <div className="field">
+            <label style={{ color: 'var(--color-text-secondary)' }}>Email</label>
+            <input
+              type="email"
+              placeholder="Enter your Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="field">
+            <label style={{ color: 'var(--color-text-secondary)' }}>Password</label>
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <p style={{ color: 'var(--color-danger)', fontSize: 13, textAlign: 'center' }}>{error}</p>
+          )}
+
+          <button type="submit" className="login-submit-btn" disabled={loading}>
+            {loading ? <span className="spinner" /> : 'Log In'}
+          </button>
+        </form>
+
+        <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--color-text-secondary)' }}>
+          Don&apos;t have an account? <Link to="/register" style={{ fontWeight: 600, color: 'var(--color-primary)' }}>Sign up</Link>
+        </p>
+
+        <div style={{ flex: 1 }}></div>
+
+        <div className="login-demo-mobile">
+          <p className="login-demo-title">DEMO ACCOUNTS</p>
+          <div className="login-demo-item">
+            <span className="login-demo-role">Student:</span>
+            <span className="login-demo-email">alice@university.edu</span>
+            <span className="login-demo-divider">-</span>
+            <span className="login-demo-pass">pass1</span>
+          </div>
+          <div className="login-demo-item">
+            <span className="login-demo-role">Manager:</span>
+            <span className="login-demo-email">bob@library.edu</span>
+            <span className="login-demo-divider">-</span>
+            <span className="login-demo-pass">pass2</span>
+          </div>
+        </div>
       </div>
 
+      {/* ── DESKTOP/TABLET VIEW ── */}
+      <div className="login-desktop">
+        <div className="login-card">
+          <div className="logo-container">
+            <img src={logoImage} alt="Logo" className="logo" />
+          </div>
 
-      <form onSubmit={handleSubmit} className="stack">
+          <h1 className="login-title">Library Seat Finder</h1>
+          <p className="login-subtitle">Reserve your study space in seconds</p>
 
-        {/* Email */}
-        <div
-          className="field"
-          style={{
-            marginBottom: 15,
-            position: "relative",
-          }}
-        >
-          <label style={{color: 'white'}}>Email</label>
-          <input
-            type="email"
-            placeholder="Enter your Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ background: 'rgba(255, 255, 255, 0.12)', border: '1.5px solid rgba(255,255,255,0.25)', color: 'white' }}
-          />
+          <form onSubmit={handleSubmit} className="login-form">
+            <div className="login-field">
+              <label>Email</label>
+              <input
+                type="email"
+                placeholder="Enter your Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="login-field">
+              <label>Password</label>
+              <div className="login-password-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="login-password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                </button>
+              </div>
+            </div>
+
+            {error && <p className="login-error">{error}</p>}
+
+            <button type="submit" className="login-submit-btn" disabled={loading}>
+              {loading ? <span className="spinner" /> : 'Log In'}
+            </button>
+          </form>
+
+          <div className="login-footer">
+            <p>
+              Don't have an account? <Link to="/register">Sign up</Link>
+            </p>
+          </div>
+
+          <div style={{ flex: 1 }}></div>
+
+         
         </div>
-
-        {/* Password */}
-        <div
-          className="field"
-          style={{
-            marginBottom: 15,
-            position: "relative",
-          }}
-        >
-          <label style={{color: 'white'}} >Password</label>
-          <input
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Enter your Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{
-              background: 'rgba(255, 255, 255, 0.12)',
-              border: '1.5px solid rgba(255,255,255,0.25)',
-              color: 'silver',
-              width: '100%',
-              paddingRight: '45px',
-            }}
-          />
-
-          <img
-            src={showPassword ? openEye : closeEye}
-            alt="Toggle Password"
-            onClick={() => setShowPassword(!showPassword)}
-            style={{
-              position: 'absolute',
-              right: '15px',
-              top: '65%',
-              transform: 'translateY(-50%)',
-              width: 20,
-              height: 20,
-              cursor: 'pointer',
-            }}
-          />
-        </div>
-
-        {error && (
-          <p style={{ color: '#FFD3D0', fontSize: 13, textAlign: 'center' }}>{error}</p>
-        )}
-
-        <Button type="submit" variant="primary" loading={loading} className="mt-8" style={{ background: 'white', color: 'var(--color-primary)' }}>
-          Log In
-        </Button>
-      </form>
-
-      <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, opacity: 0.85 }}>
-        Don&apos;t have an account? <Link to="/register" style={{ fontWeight: 600, textDecoration: 'underline' }}>Sign up</Link>
-      </p>
-
-      
+      </div>
     </div>
   );
 }

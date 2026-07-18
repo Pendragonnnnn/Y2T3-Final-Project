@@ -27,7 +27,7 @@ class Reservation {
 
   static async activeReservationCount(userId) {
     const [rows] = await db.query(
-      "SELECT reservation_id FROM Reservation_Record WHERE user_id = ? AND outcome IN ('Pending', 'Active')",
+      "SELECT r.reservation_id FROM Reservation_Record r JOIN User u ON u.user_id = r.user_id WHERE r.user_id = ? AND r.outcome IN ('Pending', 'Active') AND u.role = 'Student'",
       [userId]
     );
     return rows.length > 0;

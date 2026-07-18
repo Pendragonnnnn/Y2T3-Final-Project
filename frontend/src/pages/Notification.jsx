@@ -128,25 +128,6 @@ export default function Notification() {
     }
   };
 
-  // =========================
-  // Mark All
-  // =========================
-  const markAllAsRead = async () => {
-    try {
-      await api.put(`/notifications/${user.userId}/read-all`);
-
-      setNotifications((prev) =>
-        prev.map((n) => ({
-          ...n,
-          is_read: true,
-        }))
-      );
-
-      window.dispatchEvent(new Event("notificationUpdated"));
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   return (
     <div className="screen">
@@ -173,16 +154,6 @@ export default function Notification() {
 
         <div style={{ width: 22 }} />
       </div>
-
-      {/* Mark All Button */}
-      {!loading && notifications.length > 0 && (
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 15}} >
-
-          <button onClick={markAllAsRead} style={{ padding: "8px 14px", border: "none", borderRadius: 8, background: "#0d6efd", color: "#fff", cursor: "pointer"}}>
-            Mark all as read
-          </button>
-        </div>
-      )}
 
       {/* Error */}
       {error && (

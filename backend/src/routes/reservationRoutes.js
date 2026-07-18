@@ -22,7 +22,7 @@ const { authenticate, requireRole } = require('../middleware/auth');
  *       500:
  *         description: Failed to create reservation
  */
-router.post('/quick', authenticate, requireRole('student'), reservationController.quickRandomReserve);
+router.post('/quick', authenticate, requireRole('student', 'guest'), reservationController.quickRandomReserve);
 
 /**
  * @swagger
@@ -40,7 +40,7 @@ router.post('/quick', authenticate, requireRole('student'), reservationControlle
  *       500:
  *         description: Failed to fetch status
  */
-router.get('/check-status', authenticate, requireRole('student'), reservationController.checkStatus);
+router.get('/check-status', authenticate, requireRole('student', 'guest'), reservationController.checkStatus);
 
 /**
  * @swagger
@@ -75,7 +75,7 @@ router.get('/check-status', authenticate, requireRole('student'), reservationCon
  *       500:
  *         description: Failed to create reservation
  */
-router.post('/manual', authenticate, requireRole('student'), reservationController.manualReserve);
+router.post('/manual', authenticate, requireRole('student', 'guest'), reservationController.manualReserve);
 
 /**
  * @swagger
@@ -93,7 +93,7 @@ router.post('/manual', authenticate, requireRole('student'), reservationControll
  *       500:
  *         description: Failed to fetch reservations
  */
-router.get('/mine', authenticate, requireRole('student'), reservationController.myReservations);
+router.get('/mine', authenticate, requireRole('student', 'guest'), reservationController.myReservations);
 
 /**
  * @swagger
@@ -111,7 +111,7 @@ router.get('/mine', authenticate, requireRole('student'), reservationController.
  *       500:
  *         description: Failed to fetch reservation history
  */
-router.get('/history', authenticate, requireRole('student'), reservationController.myHistory);
+router.get('/history', authenticate, requireRole('student' ,'guest'), reservationController.myHistory);
 
 /**
  * @swagger
@@ -139,7 +139,7 @@ router.get('/history', authenticate, requireRole('student'), reservationControll
  *       500:
  *         description: Failed to cancel reservation
  */
-router.delete('/:reservationId', authenticate, requireRole('student'), reservationController.cancelReservation);
+router.delete('/:reservationId', authenticate, requireRole('student', 'guest'), reservationController.cancelReservation);
 
 /**
  * @swagger
@@ -417,6 +417,6 @@ router.patch('/:reservationId/no-show', authenticate, requireRole('manager'), re
  */
 router.patch('/:reservationId/approve-checkout', authenticate, requireRole('manager'), reservationController.approveCheckout);
 
-router.get('/peakHours', authenticate, requireRole('student'), reservationController.displayPeakHours);
+router.get('/peakHours', authenticate, requireRole('student', 'guest'), reservationController.displayPeakHours);
 
 module.exports = router;

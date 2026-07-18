@@ -8,17 +8,35 @@ const User = require('../models/User');
 // ── Student: Quick Random Reserve ───────────────────────────────
 exports.quickRandomReserve = async (req, res) => {
   try {
+    const { userId } = req.user; 
+    const role = req.user.role ? req.user.role.toLowerCase() : '';
     const available = await Seat.findAvailable();
-    const hasActive = await Reservation.activeReservationCount(req.user.userId);
-    if (hasActive) {
-      return res.status(403).json({ error: 'You already have an active or pending reservation.' });
-    }
+   
     if (available.length === 0) {
       return res.status(409).json({ error: 'No seats are currently available' });
     }
     const seat = available[Math.floor(Math.random() * available.length)];
-    const reservationId = await createReservation(req.user.userId, seat.seat_id);
-    res.status(201).json({ message: 'Seat reserved', reservationId, seat });
+
+    // 1. Student Logic
+    if (role === 'student') {
+      const hasActive = await Reservation.activeReservationCount(userId);
+      if (hasActive) {
+        return res.status(403).json({ error: 'You already have an active or pending reservation.' });
+      }
+      
+      const reservationId = await createReservation(userId, seat.seat_id, 'Pending');
+      return res.status(201).json({ message: 'Seat reservation pending', reservationId, seat });
+    } 
+    
+    // 2. Guest Logic
+    if (role === 'guest') {
+      const reservationId = await createReservation(userId, seat.seat_id, 'Active');
+      return res.status(201).json({ message: 'Seat reserved', reservationId, seat });
+    }
+
+    // 3. Fallback for unhandled roles (e.g., Admin) to prevent the request from hanging
+    return res.status(403).json({ error: 'Your role is not authorized to make reservations.' });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create reservation' });
@@ -38,33 +56,50 @@ exports.checkStatus = async (req, res) => {
 exports.manualReserve = async (req, res) => {
   try {
     const { seatId } = req.body;
-    const seat = await Seat.findById(seatId);
+    const { userId } = req.user; // Destructured for cleaner code
+    const role = req.user.role ? req.user.role.toLowerCase() : '';
 
-    if (!seat) return res.status(404).json({ error: 'Seat not found' });
+    const seat = await Seat.findById(seatId);
+    if (!seat) {
+      return res.status(404).json({ error: 'Seat not found' });
+    }
+
     if (seat.current_status !== 'available') {
       return res.status(409).json({ error: 'This seat is not available' });
     }
 
-    const hasActive = await Reservation.activeReservationCount(req.user.userId);
-    if (hasActive) {
-      return res.status(403).json({ error: 'You already have an active or pending reservation.' });
+    // 1. Student Logic
+    if (role === 'student') {
+      const hasActive = await Reservation.activeReservationCount(userId);
+      if (hasActive) {
+        return res.status(403).json({ error: 'You already have an active or pending reservation.' });
+      }
+      
+      const reservationId = await createReservation(userId, seatId, 'Pending');
+      return res.status(201).json({ message: 'Seat reservation pending', reservationId, seat });
+    } 
+    
+    // 2. Guest Logic
+    if (role === 'guest') {
+      const reservationId = await createReservation(userId, seatId, 'Active');
+      return res.status(201).json({ message: 'Seat reserved', reservationId, seat });
     }
 
-    const reservationId = await createReservation(req.user.userId, seatId);
-    res.status(201).json({ message: 'Seat reserved', reservationId, seat });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to create reservation' });
+    // 3. Fallback for unhandled roles (e.g., Admin) to prevent the request from hanging
+    return res.status(403).json({ error: 'Your role is not authorized to make reservations.' });
+
+  } catch (error) {
+    console.error('Error in manualReserve:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
-
-async function createReservation(userId, seatId) {
+async function createReservation(userId, seatId, result) {
   const reservationId = await Reservation.create({
     user_id: userId,
     seat_id: seatId,
     reservation_date: new Date(),
     start_time: new Date(),
-    outcome: 'Pending',
+    outcome: result,
   });
   await Seat.updateStatus(seatId, 'occupied');
 

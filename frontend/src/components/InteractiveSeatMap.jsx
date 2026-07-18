@@ -314,9 +314,9 @@ export default function InteractiveSeatMap({
                         transition: 'all 0.15s ease',
                         opacity: !isManager && seat.current_status === 'blocked' ? 0.6 : 1,
                       }}
-                      title={`${(seat.current_status).toUpperCase()}`}
+                      title={`Seat ${seat.seat_id} — ${(seat.current_status).toUpperCase()}`}
                     >
-                      {isHighlighted ? '✓' : isManager ? seat.seat_id : '【　】'}
+                      {isHighlighted ? '✓' : seat.seat_id}
                     </button>
                   );
                 })}

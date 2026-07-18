@@ -125,10 +125,7 @@ export default function Login() {
         Don&apos;t have an account? <Link to="/register" style={{ fontWeight: 600, textDecoration: 'underline' }}>Sign up</Link>
       </p>
 
-      <div style={{ marginTop: 'auto', paddingTop: 30, fontSize: 11, opacity: 0.6, textAlign: 'center' }}>
-        Demo accounts — student: miguel@student.edu · manager: manager@library.edu<br />
-        Password: password123
-      </div>
+      
     </div>
   );
 }

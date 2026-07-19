@@ -195,7 +195,7 @@ const fetchUnreadCount = useCallback(async () => {
           <h2 className="card-title">Peak Booking Hours </h2>
         </div>
         <div className="card mt-16">
-        <p style={{ fontWeight: 200, marginBottom: 20, color:'#666666', fontSize:'12px'}}>Most recent 30 days</p>
+        <p style={{ fontWeight: 200, marginBottom: 20, color: 'var(--color-text-secondary)', fontSize:'12px'}}>Most recent 30 days</p>
         
         {!peakHours || peakHours.length === 0 ? (
           <p className="text-muted text-center py-4">No hourly data tracked yet.</p>
@@ -223,7 +223,7 @@ const fetchUnreadCount = useCallback(async () => {
                     <span style={{ fontSize: '10px', color: 'var(--color-text-primary)', fontWeight: '600', marginBottom: '4px' }}>
                       {item.count}
                     </span>
-                    <div style={{ width: '65%', height: barHeight, backgroundColor: '#4095F6', borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '8px', flexShrink: 0 }} title={`${item.count} reservations at ${displayHour}`} />
+                    <div style={{ width: '65%', height: barHeight, backgroundColor: '#1E3F9E', borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '8px', flexShrink: 0 }} title={`${item.count} reservations at ${displayHour}`} />
                     <span className="text-muted" style={{ fontSize: '10px', marginTop: '8px', whiteSpace: 'nowrap' }}>
                       {displayHour}
                     </span>
@@ -270,7 +270,7 @@ const fetchUnreadCount = useCallback(async () => {
           <h2 className="card-title">Peak Booking Hours </h2>
         </div>
         <div className="card mt-16">
-        <p style={{ fontWeight: 200, marginBottom: 20, color:'#666666', fontSize:'12px'}}>Most recent 30 days</p>
+        <p style={{ fontWeight: 200, marginBottom: 20, color: 'var(--color-text-secondary)', fontSize:'12px'}}>Most recent 30 days</p>
         
         {!peakHours || peakHours.length === 0 ? (
           <p className="text-muted text-center py-4">No hourly data tracked yet.</p>
@@ -298,7 +298,7 @@ const fetchUnreadCount = useCallback(async () => {
                     <span style={{ fontSize: '10px', color: 'var(--color-text-primary)', fontWeight: '600', marginBottom: '4px' }}>
                       {item.count}
                     </span>
-                    <div style={{ width: '65%', height: barHeight, backgroundColor: '#4095F6', borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '8px', flexShrink: 0 }} title={`${item.count} reservations at ${displayHour}`} />
+                    <div style={{ width: '65%', height: barHeight, backgroundColor: '#1E3F9E', borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '8px', flexShrink: 0 }} title={`${item.count} reservations at ${displayHour}`} />
                     <span className="text-muted" style={{ fontSize: '10px', marginTop: '8px', whiteSpace: 'nowrap' }}>
                       {displayHour}
                     </span>

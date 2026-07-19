@@ -93,7 +93,7 @@ export default function Profile() {
       <div className="text-center">
         <div style={{
           width: 100, height: 100, borderRadius: '50%',
-          background: '#4095f6d2', color: 'white',
+          background: '#1E3F9Ed2', color: 'white',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 48, fontWeight: 500, margin: '0 auto 12px',
         }}>

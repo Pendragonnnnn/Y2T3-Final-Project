@@ -5,7 +5,7 @@ import BottomNav from '../components/BottomNav';
 
 const SENTIMENT_COLORS = {
   bug: '#E74C3C',
-  feature_request: '#4095F6',
+  feature_request: '#1E3F9E',
   management_issue: '#F5A623',
   general: '#A0AAC2',
 };
@@ -151,7 +151,7 @@ export default function ManagerReport() {
                     <span style={{ fontSize: '10px', color: 'var(--color-text-primary)', fontWeight: '600', marginBottom: '4px' }}>
                       {item.count}
                     </span>
-                    <div style={{ width: '40%', height: barHeight, backgroundColor: '#4095F6', borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '8px', flexShrink: 0 }} title={`${item.count} reservations at ${displayHour}`} />
+                    <div style={{ width: '40%', height: barHeight, backgroundColor: '#1E3F9E', borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '8px', flexShrink: 0 }} title={`${item.count} reservations at ${displayHour}`} />
                     <span className="text-muted" style={{ fontSize: '10px', marginTop: '8px', whiteSpace: 'nowrap' }}>
                       {displayHour}
                     </span>
@@ -166,7 +166,7 @@ export default function ManagerReport() {
       <div className="card mt-16">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p style={{ fontWeight: 600, margin: 0 }}>User Feedback</p>
-          <Link to="/manager/feedback/management-issues" style={{ color: '#4095F6', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+          <Link to="/manager/feedback/management-issues" style={{ color: '#1E3F9E', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
             View feedback
           </Link>
         </div>

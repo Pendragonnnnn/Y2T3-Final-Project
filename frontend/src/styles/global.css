@@ -1,8 +1,8 @@
 :root {
   /* Color tokens — derived from the Figma mockups (blue gradient app theme) */
-  --color-primary: #2D5FE0;
+  --color-primary: #1E3F9E;
   --color-primary-dark: #1E3F9E;
-  --color-primary-light: #5C84F2;
+  --color-primary-light: #1E3F9E;
   --color-accent: #4ECDC4;
   --color-success: #2ECC71;
   --color-warning: #F5A623;
@@ -11,6 +11,7 @@
 
   --color-bg: #FDFDFD;
   --color-surface: #FFFFFF;
+  --card-surface: #FFFFFF;
   --color-surface-header: #FFFFFF;
   --color-border: #E3E8F0;
 
@@ -29,8 +30,8 @@
   --font-display: 'Poppins', sans-serif;
   --font-body: 'Poppins', sans-serif;
 
-  --map-bg: #475467;        /* From your dark uploaded image */
-  --map-line: #ffffff;      /* From your light line image */
+  --map-bg: #475467;        
+  --map-line: #ffffff;      
   --map-surface: #475463;
   --table-surface: #76859b;
   --shadow-shell: 0 20px 60px rgba(26, 34, 56, 0.18);
@@ -529,7 +530,6 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-   
   }
 .logo-name-nav{
     display: block;
@@ -1235,8 +1235,8 @@ html[data-theme="dark"] .scan-result.success {
   background: rgba(46, 204, 113, 0.08);
 }
 
-html[data-theme="dark"] .scan-result.error {
-  background: rgba(231, 76, 60, 0.08);
+html[data-theme="dark"] .scan-result.error{
+  background: rgba(99, 73, 70, 0.08);
 }
 /* home page*/
 .screen {
@@ -1284,10 +1284,10 @@ html[data-theme="dark"] .scan-result.error {
 .card1-mobile {
   margin-top: 25px;
   width: min(100%, 385px);
-  background: #ffffff;
+  background: var(--card-surface);
   border-radius: 20px;
   padding: 16px;
-  box-shadow: 0 10px 30px rgba(30, 41, 59, 0.15);
+  box-shadow: var(--shadow-card);
   margin-left: auto;
   margin-right: auto;
 }
@@ -1466,7 +1466,7 @@ html[data-theme="dark"] input {
 .badge-blocked { background: #F0F1F4; color: #6B7693; }
 .badge-pending { background: #FFF4E0; color: #B8770A; }
 .badge-accepted { background: #539546; color: #ffffff; }
-.badge-checked_in { background: #E5EEFF; color: #2D5FE0; }
+.badge-checked_in { background: #E5EEFF; color: #1E3F9E; }
 
 /* ── Bottom nav / sidebar ── */
 .bottom-nav {
@@ -1552,12 +1552,13 @@ html[data-theme="dark"] input {
     display: none;
   }
   .card1-desktop{
-    margin-top: 25px;
+    margin-top: 10px;
     width: 385px;
-    background: #ffffff;
+    background: var(--card-surface);
     border-radius: 20px;
+    border: 1px solid var(--shell-border);
     padding: 16px;
-    box-shadow: 0 10px 30px rgba(30, 41, 59, 0.15);
+    box-shadow: var(--shadow-card);
     display: block;
   }
   .bottom-nav {
@@ -1609,7 +1610,7 @@ html[data-theme="dark"] input {
     cursor: pointer;
     color: var(--color-text-tertiary);
   }
-  .logout-item:hover { color: var(--color-danger); }
+  .logout-item:hover { background: rgba(255, 0, 0, 0.526); color:var(--color-text-primary) }
 }
 
 /* ── Seat grid ── */
@@ -1914,10 +1915,10 @@ html[data-theme="dark"] .toast {
   .card1 {
     margin-top: 25px;
     width: 385px;
-    background: #ffffff;
+    background: var(--card-surface);
     border-radius: 20px;
     padding: 16px;
-    box-shadow: 0 10px 30px rgba(30, 41, 59, 0.15);
+    box-shadow: var(--shadow-card);
   }
  
   .card-header {
@@ -1925,19 +1926,20 @@ html[data-theme="dark"] .toast {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 12px;
+    color: var(--color-text-primary)
   }
  
   .card-title {
     margin: 0;
     font-size: 16px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--color-text-primary);
   }
  
   .view-full {
     font-size: 14px;
     font-weight: 600;
-    color: #2f6bff;
+    color: #1E3F9E;
     text-decoration: none;
   }
  
@@ -1945,7 +1947,7 @@ html[data-theme="dark"] .toast {
     position: relative;
     height: 190px;
     background: #dcecfb;
-    border: 2px solid #2f6bff;
+    border: 2px solid #1E3F9E;
     border-radius: 14px;
     overflow: hidden;
   }

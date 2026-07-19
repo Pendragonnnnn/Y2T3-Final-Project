@@ -42,7 +42,7 @@ export default function StudentHistory() {
             padding: 0,
             lineHeight: 1,
             alignSelf: 'flex-start',
-            color: '#0B56A4',
+            color: '#1E3F9E',
           }}
           aria-label="Go back"
         >

@@ -9,7 +9,7 @@ export default function ManagementIssuesList() {
 
   const SENTIMENT_COLORS = {
     bug: '#E74C3C',
-    feature_request: '#4095F6',
+    feature_request: '#1E3F9E',
     management_issue: '#F5A623',
     general: '#A0AAC2',
   };

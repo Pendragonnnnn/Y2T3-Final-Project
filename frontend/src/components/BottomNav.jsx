@@ -11,7 +11,7 @@ const STUDENT_TABS = [
 ];
 
 const MANAGER_TABS = [
-  { to: '/manager', icon: '🖳', label: 'Reservations' },
+  { to: '/manager', icon: '🖳', label: 'Reservations', end: true },
   { to: '/manager/students', icon: '⫶☰', label: 'Students' },
   { to: '/manager/map', icon: '❒', label: 'Map' },
   { to: '/manager/report', icon: '◔', label: 'Analytics' },

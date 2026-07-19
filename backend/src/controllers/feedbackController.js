@@ -52,7 +52,7 @@ exports.getBreakdown = async (req, res) => {
 
 exports.listFeedback = async (req, res) => {
   try {
-    const feedback = await Feedback.listAll();
+    const feedback = await Feedback.getManagementIssues();
     res.json({ feedback });
   } catch (err) {
     console.error(err);

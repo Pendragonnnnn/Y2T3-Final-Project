@@ -38,7 +38,7 @@ export default function BottomNav() {
             <img src={logoImage} alt="Logo" className='logo' style={{ width: '80px', height: '50px' }} />
             
           </div>
-        <div className='logo-name-nav' style={{ color: 'black', fontFamily: 'sans' }}>Pocket Library</div>
+        <div className='logo-name-nav' style={{ color: '#7a7a7a', fontFamily: 'sans' }}>Pocket Library</div>
       </div>
       {tabs.map((tab) => (
         <NavLink

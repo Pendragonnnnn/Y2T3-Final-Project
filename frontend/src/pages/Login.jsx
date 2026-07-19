@@ -55,7 +55,7 @@ export default function Login() {
           <div className='logo-container'>
             <img src={logoImage} alt="Logo" className='logo' />
           </div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-text-primary)' }}>Library Seat Finder</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-text-primary)', fontFamily: 'serif' }}>Pocket Library</h1>
           <p style={{ opacity: 0.8, fontSize: 13, marginTop: 4, color: 'var(--color-text-secondary)' }}>Reserve your study space in seconds</p>
         </div>
 
@@ -105,21 +105,7 @@ export default function Login() {
 
         <div style={{ flex: 1 }}></div>
 
-        <div className="login-demo-mobile">
-          <p className="login-demo-title">DEMO ACCOUNTS</p>
-          <div className="login-demo-item">
-            <span className="login-demo-role">Student:</span>
-            <span className="login-demo-email">alice@university.edu</span>
-            <span className="login-demo-divider">-</span>
-            <span className="login-demo-pass">pass1</span>
-          </div>
-          <div className="login-demo-item">
-            <span className="login-demo-role">Manager:</span>
-            <span className="login-demo-email">bob@library.edu</span>
-            <span className="login-demo-divider">-</span>
-            <span className="login-demo-pass">pass2</span>
-          </div>
-        </div>
+        
       </div>
 
       {/* ── DESKTOP/TABLET VIEW ── */}
@@ -129,7 +115,7 @@ export default function Login() {
             <img src={logoImage} alt="Logo" className="logo" />
           </div>
 
-          <h1 className="login-title">Library Seat Finder</h1>
+          <h1 className="login-title" style={{ fontFamily: 'serif' }}>Pocket Library</h1>
           <p className="login-subtitle">Reserve your study space in seconds</p>
 
           <form onSubmit={handleSubmit} className="login-form">

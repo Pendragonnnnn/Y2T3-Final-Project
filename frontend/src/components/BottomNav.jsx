@@ -1,5 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import s1 from '../assets/s1.png';
+import s3 from '../assets/s3.png';
 
 const STUDENT_TABS = [
   { to: '/home', icon: '🏠︎', label: 'Home' },
@@ -27,8 +29,17 @@ export default function BottomNav() {
     navigate('/login');
   };
 
+  const logoImage = s1;
+
   return (
     <nav className="bottom-nav">
+      <div style={{ marginBottom: 18 }}>
+        <div className='logo-nav' style={{ width: 'auto',  }}>
+            <img src={logoImage} alt="Logo" className='logo' style={{ width: '80px', height: '50px' }} />
+            
+          </div>
+        <div className='logo-name-nav' style={{ color: 'black', fontFamily: 'sans' }}>Pocket Library</div>
+      </div>
       {tabs.map((tab) => (
         <NavLink
           key={tab.to}

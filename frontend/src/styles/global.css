@@ -190,6 +190,8 @@ a { text-decoration: none; color: inherit; }
   justify-content: center;
 }
 
+
+
 .logo {
   width: 25px;
   height: 25px;
@@ -508,11 +510,31 @@ a { text-decoration: none; color: inherit; }
   font-size: 11px;
 }
 
+.logo-nav {
+  display: none;
+}
+
+.logo-name-nav{
+    display: none;
+  }
+
 /* ── RESPONSIVE ── */
 @media (min-width: 768px) {
   .login-mobile {
     display: none !important;
   }
+
+  .logo-nav{
+    margin: 16 auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   
+  }
+.logo-name-nav{
+    display: block;
+  }
+  
 
   .login-desktop {
     display: flex !important;

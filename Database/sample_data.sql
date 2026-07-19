@@ -68,6 +68,9 @@ CROSS JOIN (
 -- Assumes Library_Table (18 rows) and Seat (72 rows, 4 per table) already inserted as provided
 
 
+INSERT INTO User (email, password, full_name, role) VALUES
+('alice@university.edu', 'pass1', 'Alice Student', 'Student'),
+('bob@library.edu', 'pass2', 'Bob Manager', 'Manager');
 
 -- USERS (60 total: user_id 1-5 = Manager, 6-60 = Student)
 
@@ -418,3 +421,33 @@ SET s.current_status = CASE
     WHEN s.current_status = 'Blocked' THEN 'Blocked'
     ELSE 'Available'
 END;
+
+
+/* =====================================================
+   DATABASE PERFORMANCE TUNING - INDEXES
+   ===================================================== */
+-- User
+CREATE INDEX idx_user_email
+ON User(email);
+
+-- Seat
+CREATE INDEX idx_seat_status
+ON Seat(current_status);
+
+-- Reservation_Record
+CREATE INDEX idx_reservation_user_outcome
+ON Reservation_Record(user_id, outcome);
+
+CREATE INDEX idx_reservation_outcome_start
+ON Reservation_Record(outcome, start_time);
+
+CREATE INDEX idx_reservation_date
+ON Reservation_Record(reservation_date);
+
+-- Feedback
+CREATE INDEX idx_feedback_sentiment
+ON Feedback(sentiment);
+
+-- Notification
+CREATE INDEX idx_notification_recipient_read
+ON Notification(recipient_id, is_read);
